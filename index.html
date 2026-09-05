@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JanMitra AI — Discover Government Schemes Instantly with AI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+:root{
+  --primary:#2563EB;
+  --primary-dark:#1D4ED8;
+  --primary-light:#60A5FA;
+  --secondary:#10B981;
+  --accent:#F59E0B;
+  --bg:#F8FAFC;
+  --card:#FFFFFF;
+  --text:#0F172A;
+  --text-muted:#475569;
+  --text-soft:#94A3B8;
+  --border:#E2E8F0;
+  --shadow-sm: 0 1px 2px rgba(15,23,42,0.04);
+  --shadow-md: 0 8px 30px rgba(15,23,42,0.06);
+  --shadow-lg: 0 20px 60px rgba(15,23,42,0.10);
+  --shadow-glow: 0 0 0 1px rgba(37,99,235,0.08), 0 20px 60px rgba(37,99,235,0.14);
+  --radius: 20px;
+  --radius-sm: 14px;
+  --space: 8px;
+  --font-display: 'Plus Jakarta Sans', 'Inter', sans-serif;
+  --font-body: 'Inter', sans-serif;
+}
+[data-theme="dark"]{
+  --bg:#0B1120;
+  --card:#111A2E;
+  --text:#F1F5F9;
+  --text-muted:#94A3B8;
+  --text-soft:#5B6B84;
+  --border:#1E293B;
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.3);
+  --shadow-md: 0 8px 30px rgba(0,0,0,0.35);
+  --shadow-lg: 0 20px 60px rgba(0,0,0,0.45);
+  --shadow-glow: 0 0 0 1px rgba(96,165,250,0.15), 0 20px 60px rgba(37,99,235,0.25);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  font-family:var(--font-body);
+  background:var(--bg);
+  color:var(--text);
+  line-height:1.6;
+  overflow-x:hidden;
+  transition:background .4s ease, color .4s ease;
+}
+img{max-width:100%;display:block;}
+a{text-decoration:none;color:inherit;}
+button{font-family:inherit;cursor:pointer;border:none;background:none;}
+ul{list-style:none;}
+.container{max-width:1200px;margin:0 auto;padding:0 32px;}
+.section{padding:120px 0;}
+.eyebrow{
+  display:inline-flex;align-items:center;gap:8px;
+  font-size:13px;font-weight:600;letter-spacing:.04em;
+  color:var(--primary);
+  background:color-mix(in srgb, var(--primary) 10%, transparent);
+  padding:8px 16px;border-radius:100px;
+  margin-bottom:24px;
+}
+[data-theme="dark"] .eyebrow{ background:rgba(37,99,235,0.15); }
+h1,h2,h3,h4{font-family:var(--font-display);font-weight:800;letter-spacing:-0.02em;color:var(--text);}
+.section-head{max-width:640px;margin:0 auto 64px;text-align:center;}
+.section-head h2{font-size:clamp(28px,4vw,44px);margin-bottom:16px;line-height:1.15;}
+.section-head p{font-size:17px;color:var(--text-muted);}
+.gradient-text{
+  background:linear-gradient(100deg, var(--primary) 0%, var(--secondary) 60%, var(--accent) 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  font-weight:600;font-size:15px;padding:14px 28px;border-radius:100px;
+  transition:transform .25s cubic-bezier(.2,.8,.2,1), box-shadow .25s ease, background .25s ease;
+  position:relative; overflow:hidden; white-space:nowrap;
+}
+.btn-primary{
+  background:linear-gradient(135deg, var(--primary), var(--primary-dark));
+  color:#fff; box-shadow:0 8px 24px rgba(37,99,235,0.35);
+}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 12px 32px rgba(37,99,235,0.45);}
+.btn-secondary{
+  background:var(--card); color:var(--text); border:1px solid var(--border);
+  box-shadow:var(--shadow-sm);
+}
+[data-theme="dark"] .btn-secondary{background:rgba(255,255,255,0.04);}
+.btn-secondary:hover{transform:translateY(-2px);box-shadow:var(--shadow-md);border-color:var(--primary-light);}
+.btn-ghost{color:var(--text); font-weight:600; font-size:15px;}
+.ripple{position:absolute;border-radius:50%;background:rgba(255,255,255,0.5);transform:scale(0);animation:ripple .6s ease-out;pointer-events:none;}
+@keyframes ripple{to{transform:scale(4);opacity:0;}}
+ 
+/* ===== NAVBAR ===== */
+.navbar{
+  position:fixed;top:0;left:0;right:0;z-index:1000;
+  padding:20px 0; transition:all .35s cubic-bezier(.2,.8,.2,1);
+}
+.navbar-inner{
+  max-width:1200px;margin:0 auto;padding:0 32px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.navbar.scrolled{
+  padding:12px 0; background:color-mix(in srgb, var(--bg) 80%, transparent);
+  backdrop-filter:blur(16px) saturate(180%);
+  box-shadow:0 1px 0 var(--border);
+}
+.logo{display:flex;align-items:center;gap:10px;font-family:var(--font-display);font-weight:800;font-size:19px;}
+.logo-mark{
+  width:36px;height:36px;border-radius:11px;
+  background:linear-gradient(135deg, var(--primary), var(--secondary));
+  display:flex;align-items:center;justify-content:center;color:#fff;font-size:16px;
+  box-shadow:0 6px 16px rgba(37,99,235,0.35);
+}
+.nav-links{display:flex;align-items:center;gap:36px;}
+.nav-links a{font-size:14.5px;font-weight:500;color:var(--text-muted);transition:color .2s;position:relative;}
+.nav-links a:hover{color:var(--text);}
+.nav-links a::after{content:'';position:absolute;left:0;bottom:-6px;width:0;height:2px;background:var(--primary);transition:width .25s ease;}
+.nav-links a:hover::after{width:100%;}
+.nav-actions{display:flex;align-items:center;gap:14px;}
+.theme-toggle{
+  width:38px;height:38px;border-radius:50%;border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;color:var(--text-muted);
+  transition:all .2s;
+}
+.theme-toggle:hover{color:var(--primary);border-color:var(--primary-light);}
+.mobile-toggle{display:none;font-size:20px;color:var(--text);}
+@media (max-width:900px){
+  .nav-links{display:none;}
+  .nav-actions .btn-ghost{display:none;}
+  .mobile-toggle{display:block;}
+}
+ 
+/* ===== HERO ===== */
+.hero{
+  position:relative;padding:180px 0 120px;overflow:hidden;
+}
+.hero-bg{
+  position:absolute;inset:0;z-index:-1;
+  background:
+    radial-gradient(600px 400px at 15% 20%, rgba(37,99,235,0.12), transparent 70%),
+    radial-gradient(600px 500px at 85% 10%, rgba(16,185,129,0.10), transparent 70%),
+    radial-gradient(500px 400px at 70% 80%, rgba(245,158,11,0.08), transparent 70%);
+}
+.hero-grid{
+  display:grid;grid-template-columns:1.05fr 0.95fr;gap:60px;align-items:center;
+}
+@media (max-width:980px){.hero-grid{grid-template-columns:1fr;}}
+.hero-copy h1{
+  font-size:clamp(36px,5vw,58px);line-height:1.08;margin-bottom:24px;
+}
+.hero-copy p{font-size:18px;color:var(--text-muted);max-width:520px;margin-bottom:36px;}
+.hero-ctas{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:40px;}
+.hero-stats-inline{display:flex;gap:32px;flex-wrap:wrap;}
+.hero-stats-inline div{display:flex;flex-direction:column;}
+.hero-stats-inline strong{font-family:var(--font-display);font-size:22px;font-weight:800;}
+.hero-stats-inline span{font-size:13px;color:var(--text-soft);}
+ 
+/* Hero illustration */
+.hero-visual{position:relative;height:520px;}
+.float-card{
+  position:absolute;background:var(--card);border-radius:var(--radius-sm);
+  box-shadow:var(--shadow-lg);border:1px solid var(--border);
+  padding:18px;animation:floaty 6s ease-in-out infinite;
+}
+@keyframes floaty{0%,100%{transform:translateY(0px);}50%{transform:translateY(-14px);}}
+.card-chat{top:0;left:0;width:300px;z-index:3;animation-delay:0s;}
+.card-chat .msg{font-size:13px;color:var(--text-muted);background:var(--bg);padding:10px 14px;border-radius:12px;margin-bottom:8px;}
+.card-chat .msg.ai{background:color-mix(in srgb, var(--primary) 8%, var(--bg));color:var(--text);}
+.card-chat .row{display:flex;align-items:center;gap:8px;margin-bottom:14px;}
+.dot-ai{width:22px;height:22px;border-radius:7px;background:linear-gradient(135deg,var(--primary),var(--secondary));display:flex;align-items:center;justify-content:center;color:#fff;font-size:11px;}
+ 
+.card-score{top:40px;right:0;width:190px;z-index:4;animation-delay:1.2s;text-align:center;}
+.score-ring{
+  width:110px;height:110px;border-radius:50%;margin:0 auto 10px;
+  background:conic-gradient(var(--secondary) 0% 91%, var(--border) 91% 100%);
+  display:flex;align-items:center;justify-content:center;position:relative;
+}
+.score-ring::before{content:'';position:absolute;inset:10px;border-radius:50%;background:var(--card);}
+.score-ring span{position:relative;font-family:var(--font-display);font-weight:800;font-size:22px;}
+.card-score small{color:var(--text-soft);font-size:12px;}
+ 
+.card-scheme{bottom:40px;left:20px;width:260px;z-index:2;animation-delay:2s;}
+.scheme-tag{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;color:var(--secondary);background:rgba(16,185,129,0.12);padding:4px 10px;border-radius:100px;margin-bottom:10px;}
+.card-scheme h4{font-size:14.5px;margin-bottom:6px;}
+.card-scheme p{font-size:12.5px;color:var(--text-muted);}
+ 
+.card-doc{bottom:0;right:10px;width:210px;z-index:3;animation-delay:3s;}
+.doc-item{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--text-muted);margin-bottom:10px;}
+.doc-check{width:16px;height:16px;border-radius:5px;background:var(--secondary);color:#fff;font-size:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+ 
+.glow-orb{position:absolute;width:340px;height:340px;border-radius:50%;
+  background:radial-gradient(circle, rgba(37,99,235,0.25), transparent 70%);
+  top:50%;left:50%;transform:translate(-50%,-50%);z-index:0;filter:blur(10px);
+  animation:pulse 4s ease-in-out infinite;
+}
+@keyframes pulse{0%,100%{opacity:.6;}50%{opacity:1;}}
+ 
+/* ===== TRUST ===== */
+.trust{padding:60px 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border);}
+.trust p.label{text-align:center;color:var(--text-soft);font-size:13px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;margin-bottom:32px;}
+.trust-row{display:flex;justify-content:center;flex-wrap:wrap;gap:40px;}
+.trust-chip{display:flex;align-items:center;gap:10px;color:var(--text-muted);font-weight:600;font-size:14.5px;opacity:.85;transition:opacity .2s;}
+.trust-chip:hover{opacity:1;color:var(--primary);}
+.trust-chip i{font-size:18px;}
+ 
+/* ===== HOW IT WORKS ===== */
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;position:relative;}
+@media (max-width:900px){.steps{grid-template-columns:1fr;}}
+.step-card{
+  background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
+  padding:32px 24px;position:relative;box-shadow:var(--shadow-sm);
+  transition:transform .3s ease, box-shadow .3s ease;
+}
+.step-card:hover{transform:translateY(-6px);box-shadow:var(--shadow-md);}
+.step-num{
+  width:44px;height:44px;border-radius:13px;
+  background:linear-gradient(135deg,var(--primary),var(--secondary));
+  color:#fff;display:flex;align-items:center;justify-content:center;
+  font-family:var(--font-display);font-weight:800;font-size:16px;margin-bottom:20px;
+}
+.step-card h4{font-size:16.5px;margin-bottom:8px;}
+.step-card p{font-size:13.5px;color:var(--text-muted);}
+.step-arrow{position:absolute;top:42px;right:-32px;color:var(--text-soft);font-size:18px;}
+@media (max-width:900px){.step-arrow{display:none;}}
+ 
+/* ===== FEATURES ===== */
+.features-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;}
+@media (max-width:900px){.features-grid{grid-template-columns:repeat(2,1fr);}}
+@media (max-width:640px){.features-grid{grid-template-columns:1fr;}}
+.feature-card{
+  background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
+  padding:30px;transition:transform .3s ease, box-shadow .3s ease, border-color .3s ease;
+}
+.feature-card:hover{transform:translateY(-6px);box-shadow:var(--shadow-glow);border-color:transparent;}
+.feature-icon{
+  width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;
+  font-size:20px;color:#fff;margin-bottom:20px;
+}
+.feature-card h4{font-size:16px;margin-bottom:8px;}
+.feature-card p{font-size:13.5px;color:var(--text-muted);}
+ 
+/* ===== AI SHOWCASE ===== */
+.ai-showcase{
+  background:var(--card);border-radius:32px;border:1px solid var(--border);
+  padding:56px;box-shadow:var(--shadow-lg);
+  display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center;
+}
+@media (max-width:900px){.ai-showcase{grid-template-columns:1fr;padding:32px;}}
+.chat-window{background:var(--bg);border-radius:20px;padding:24px;border:1px solid var(--border);}
+.chat-bubble{max-width:88%;padding:14px 18px;border-radius:16px;font-size:14px;margin-bottom:14px;line-height:1.5;}
+.chat-bubble.user{background:var(--primary);color:#fff;margin-left:auto;border-bottom-right-radius:4px;}
+.chat-bubble.ai{background:var(--card);border:1px solid var(--border);border-bottom-left-radius:4px;}
+.typing-dots span{display:inline-block;width:6px;height:6px;background:var(--text-soft);border-radius:50%;margin-right:3px;animation:blink 1.4s infinite;}
+.typing-dots span:nth-child(2){animation-delay:.2s;}
+.typing-dots span:nth-child(3){animation-delay:.4s;}
+@keyframes blink{0%,80%,100%{opacity:.2;}40%{opacity:1;}}
+.result-schemes h3{font-size:20px;margin-bottom:20px;}
+.mini-scheme{
+  display:flex;align-items:center;justify-content:space-between;
+  background:var(--bg);border:1px solid var(--border);border-radius:14px;
+  padding:16px 18px;margin-bottom:12px;transition:transform .2s;
+}
+.mini-scheme:hover{transform:translateX(4px);}
+.mini-scheme h5{font-size:14px;margin-bottom:3px;}
+.mini-scheme span{font-size:12px;color:var(--text-muted);}
+.match-pill{font-size:12px;font-weight:700;color:var(--secondary);background:rgba(16,185,129,0.12);padding:5px 12px;border-radius:100px;white-space:nowrap;}
+ 
+/* ===== DASHBOARD PREVIEW ===== */
+.dash-frame{
+  background:var(--card);border-radius:24px;border:1px solid var(--border);
+  box-shadow:var(--shadow-lg);overflow:hidden;display:grid;grid-template-columns:220px 1fr;min-height:440px;
+}
+@media (max-width:800px){.dash-frame{grid-template-columns:1fr;}}
+.dash-sidebar{
+  background:var(--bg);border-right:1px solid var(--border);padding:24px 16px;
+}
+@media (max-width:800px){.dash-sidebar{display:none;}}
+.dash-sidebar .item{
+  display:flex;align-items:center;gap:10px;padding:11px 14px;border-radius:10px;
+  font-size:13.5px;color:var(--text-muted);margin-bottom:4px;
+}
+.dash-sidebar .item.active{background:var(--card);color:var(--primary);font-weight:600;box-shadow:var(--shadow-sm);}
+.dash-main{padding:28px 32px;}
+.dash-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;flex-wrap:wrap;gap:12px;}
+.dash-top h4{font-size:18px;}
+.dash-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:24px;}
+@media (max-width:600px){.dash-cards{grid-template-columns:1fr;}}
+.dash-stat{background:var(--bg);border:1px solid var(--border);border-radius:16px;padding:18px;}
+.dash-stat span{font-size:12px;color:var(--text-soft);}
+.dash-stat strong{display:block;font-family:var(--font-display);font-size:24px;margin-top:6px;}
+.dash-chart{background:var(--bg);border:1px solid var(--border);border-radius:16px;padding:20px;display:flex;align-items:flex-end;gap:10px;height:120px;}
+.dash-chart .bar{flex:1;background:linear-gradient(180deg,var(--primary),var(--secondary));border-radius:6px 6px 0 0;opacity:.85;}
+ 
+/* ===== WHY CHOOSE ===== */
+.why-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;}
+@media (max-width:900px){.why-grid{grid-template-columns:repeat(2,1fr);}}
+@media (max-width:520px){.why-grid{grid-template-columns:1fr;}}
+.why-card{text-align:center;padding:28px 18px;border-radius:var(--radius);transition:background .25s;}
+.why-card:hover{background:var(--card);box-shadow:var(--shadow-sm);}
+.why-icon{width:52px;height:52px;border-radius:16px;background:color-mix(in srgb, var(--primary) 10%, transparent);color:var(--primary);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:20px;}
+.why-card h4{font-size:14.5px;margin-bottom:6px;}
+.why-card p{font-size:12.5px;color:var(--text-muted);}
+ 
+/* ===== STATS ===== */
+.stats-band{background:linear-gradient(120deg, var(--primary-dark), var(--primary));border-radius:32px;padding:60px 40px;}
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;text-align:center;}
+@media (max-width:700px){.stats-grid{grid-template-columns:repeat(2,1fr);}}
+.stat-item strong{display:block;font-family:var(--font-display);font-size:clamp(30px,4vw,44px);font-weight:800;color:#fff;}
+.stat-item span{color:rgba(255,255,255,0.8);font-size:13.5px;font-weight:500;}
+ 
+/* ===== TESTIMONIALS ===== */
+.testi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;}
+@media (max-width:900px){.testi-grid{grid-template-columns:1fr;}}
+.testi-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:28px;box-shadow:var(--shadow-sm);}
+.testi-top{display:flex;align-items:center;gap:12px;margin-bottom:16px;}
+.avatar{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--primary-light),var(--secondary));display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:15px;}
+.testi-top h5{font-size:14.5px;}
+.testi-top span{font-size:12px;color:var(--text-soft);}
+.testi-card p{font-size:13.5px;color:var(--text-muted);margin-bottom:14px;}
+.stars{color:var(--accent);font-size:13px;}
+ 
+/* ===== FAQ ===== */
+.faq-list{max-width:760px;margin:0 auto;}
+.faq-item{border-bottom:1px solid var(--border);}
+.faq-q{display:flex;justify-content:space-between;align-items:center;padding:22px 4px;cursor:pointer;font-weight:600;font-size:15.5px;}
+.faq-q i{transition:transform .3s ease;color:var(--primary);}
+.faq-item.open .faq-q i{transform:rotate(45deg);}
+.faq-a{max-height:0;overflow:hidden;transition:max-height .35s ease, padding .35s ease;font-size:14px;color:var(--text-muted);}
+.faq-item.open .faq-a{max-height:200px;padding-bottom:22px;}
+ 
+/* ===== CTA ===== */
+.cta-band{
+  text-align:center;background:linear-gradient(135deg, var(--primary), var(--secondary));
+  border-radius:32px;padding:80px 40px;position:relative;overflow:hidden;
+}
+.cta-band h2{color:#fff;font-size:clamp(28px,4vw,42px);margin-bottom:14px;}
+.cta-band p{color:rgba(255,255,255,0.9);font-size:16px;margin-bottom:36px;}
+.cta-band .btn-primary{background:#fff;color:var(--primary);box-shadow:0 8px 24px rgba(0,0,0,0.2);}
+.cta-band .btn-secondary{background:rgba(255,255,255,0.12);color:#fff;border-color:rgba(255,255,255,0.3);}
+ 
+/* ===== FOOTER ===== */
+footer{border-top:1px solid var(--border);padding:72px 0 32px;}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;margin-bottom:56px;}
+@media (max-width:800px){.footer-grid{grid-template-columns:repeat(2,1fr);}}
+.footer-grid h5{font-size:13px;color:var(--text-soft);text-transform:uppercase;letter-spacing:.05em;margin-bottom:16px;}
+.footer-grid ul li{margin-bottom:12px;}
+.footer-grid ul li a{font-size:14px;color:var(--text-muted);transition:color .2s;}
+.footer-grid ul li a:hover{color:var(--primary);}
+.footer-bottom{display:flex;justify-content:space-between;align-items:center;padding-top:28px;border-top:1px solid var(--border);flex-wrap:wrap;gap:16px;}
+.footer-bottom p{font-size:13px;color:var(--text-soft);}
+.social-icons{display:flex;gap:12px;}
+.social-icons a{width:36px;height:36px;border-radius:50%;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--text-muted);transition:all .2s;}
+.social-icons a:hover{background:var(--primary);color:#fff;border-color:var(--primary);}
+ 
+/* reveal animation */
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .7s cubic-bezier(.2,.8,.2,1), transform .7s cubic-bezier(.2,.8,.2,1);}
+.reveal.visible{opacity:1;transform:translateY(0);}
+ 
+@media (prefers-reduced-motion: reduce){
+  *{animation-duration:0.01ms !important; animation-iteration-count:1 !important; transition-duration:0.01ms !important;}
+  html{scroll-behavior:auto;}
+}
+:focus-visible{outline:2px solid var(--primary);outline-offset:3px;}
+</style>
+</head>
+<body>
+ 
+<nav class="navbar" id="navbar">
+  <div class="navbar-inner">
+    <a href="#" class="logo"><span class="logo-mark"><i class="fa-solid fa-sparkles"></i></span>JanMitra AI</a>
+    <div class="nav-links">
+      <a href="#hero">Home</a>
+      <a href="#features">Features</a>
+      <a href="#how-it-works">How It Works</a>
+      <a href="#ai-showcase">AI Assistant</a>
+      <a href="#why">About</a>
+      <a href="#footer">Contact</a>
+    </div>
+    <div class="nav-actions">
+      <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode"><i class="fa-solid fa-moon"></i></button>
+      <a href="#" class="btn-ghost">Login</a>
+      <a href="#" class="btn btn-primary btn-ripple">Check Eligibility</a>
+      <button class="mobile-toggle"><i class="fa-solid fa-bars"></i></button>
+    </div>
+  </div>
+</nav>
+ 
+<!-- HERO -->
+<section class="hero" id="hero">
+  <div class="hero-bg"></div>
+  <div class="container hero-grid">
+    <div class="hero-copy reveal">
+      <span class="eyebrow"><i class="fa-solid fa-bolt"></i> AI-Powered Citizen Welfare Platform</span>
+      <h1>Discover Government Schemes You're Eligible For — <span class="gradient-text">Instantly with AI</span></h1>
+      <p>JanMitra AI reads through hundreds of confusing government schemes so you don't have to. Answer a few simple questions or chat with our AI, and get personalized, easy-to-understand recommendations in minutes.</p>
+      <div class="hero-ctas">
+        <a href="#" class="btn btn-primary btn-ripple">Check My Eligibility</a>
+        <a href="#" class="btn btn-secondary btn-ripple"><i class="fa-solid fa-play"></i> Watch Demo</a>
+      </div>
+      <div class="hero-stats-inline">
+        <div><strong>1000+</strong><span>Government Schemes</span></div>
+        <div><strong>50K+</strong><span>Citizens Assisted</span></div>
+        <div><strong>95%</strong><span>Recommendation Accuracy</span></div>
+      </div>
+    </div>
+    <div class="hero-visual reveal">
+      <div class="glow-orb"></div>
+      <div class="float-card card-chat">
+        <div class="row"><span class="dot-ai"><i class="fa-solid fa-sparkle"></i></span><strong style="font-size:13px;">JanMitra Assistant</strong></div>
+        <div class="msg">2nd year engineering student, Rajasthan, family income ₹1.8L</div>
+        <div class="msg ai">Great — you may qualify for 6 scholarship schemes. Checking eligibility now…</div>
+      </div>
+      <div class="float-card card-score">
+        <div class="score-ring"><span>91%</span></div>
+        <small>Eligibility Score</small>
+      </div>
+      <div class="float-card card-scheme">
+        <span class="scheme-tag"><i class="fa-solid fa-circle-check"></i> Matched Scheme</span>
+        <h4>National Merit Scholarship</h4>
+        <p>Covers tuition + monthly stipend for eligible students</p>
+      </div>
+      <div class="float-card card-doc">
+        <div class="doc-item"><span class="doc-check"><i class="fa-solid fa-check"></i></span> Aadhaar Card</div>
+        <div class="doc-item"><span class="doc-check"><i class="fa-solid fa-check"></i></span> Income Certificate</div>
+        <div class="doc-item"><span class="doc-check"><i class="fa-solid fa-check"></i></span> Bonafide Letter</div>
+      </div>
+    </div>
+  </div>
+</section>
+ 
+<!-- TRUST -->
+<section class="trust">
+  <div class="container">
+    <p class="label">Trusted by citizens across India</p>
+    <div class="trust-row">
+      <div class="trust-chip"><i class="fa-solid fa-graduation-cap"></i> Students</div>
+      <div class="trust-chip"><i class="fa-solid fa-people-roof"></i> Families</div>
+      <div class="trust-chip"><i class="fa-solid fa-tractor"></i> Farmers</div>
+      <div class="trust-chip"><i class="fa-solid fa-briefcase"></i> Women Entrepreneurs</div>
+      <div class="trust-chip"><i class="fa-solid fa-shop"></i> Small Businesses</div>
+      <div class="trust-chip"><i class="fa-solid fa-landmark"></i> Future Govt. Partnerships</div>
+    </div>
+  </div>
+</section>
+ 
+<!-- HOW IT WORKS -->
+<section class="section" id="how-it-works">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="eyebrow">How It Works</span>
+      <h2>From confusion to clarity in four steps</h2>
+      <p>No paperwork maze. No jargon. Just answers.</p>
+    </div>
+    <div class="steps">
+      <div class="step-card reveal"><div class="step-num">01</div><h4>Create Profile</h4><p>Tell us a little about yourself — age, state, occupation, and income.</p><i class="fa-solid fa-arrow-right step-arrow"></i></div>
+      <div class="step-card reveal"><div class="step-num">02</div><h4>Answer Simple Questions</h4><p>A short, plain-language questionnaire — no legal terms, no confusion.</p><i class="fa-solid fa-arrow-right step-arrow"></i></div>
+      <div class="step-card reveal"><div class="step-num">03</div><h4>AI Analyzes Eligibility</h4><p>Our AI cross-checks your profile against 1000+ scheme criteria instantly.</p><i class="fa-solid fa-arrow-right step-arrow"></i></div>
+      <div class="step-card reveal"><div class="step-num">04</div><h4>Get Personalized Schemes</h4><p>Receive a ranked list of schemes, documents needed, and how to apply.</p></div>
+    </div>
+  </div>
+</section>
+ 
+<!-- FEATURES -->
+<section class="section" id="features" style="background:var(--card);">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="eyebrow">Features</span>
+      <h2>Everything you need to find your benefits</h2>
+      <p>Built for clarity, speed, and trust.</p>
+    </div>
+    <div class="features-grid" id="featuresGrid"></div>
+  </div>
+</section>
+ 
+<!-- AI SHOWCASE -->
+<section class="section" id="ai-showcase">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="eyebrow">AI Assistant</span>
+      <h2>Just describe your situation — in your own words</h2>
+      <p>No forms to fill. Chat naturally, like you would with a knowledgeable friend.</p>
+    </div>
+    <div class="ai-showcase reveal">
+      <div class="chat-window">
+        <div class="chat-bubble user">I am a second-year engineering student from Rajasthan with family income below ₹2 lakh.</div>
+        <div class="chat-bubble ai">You are likely eligible for 6 schemes, including central scholarships and state fee waivers. Here's what matches your profile 👇</div>
+        <div class="chat-bubble ai"><span class="typing-dots"><span></span><span></span><span></span></span></div>
+      </div>
+      <div class="result-schemes">
+        <h3>Recommended for you</h3>
+        <div class="mini-scheme"><div><h5>National Merit-cum-Means Scholarship</h5><span>Central Govt · Education</span></div><span class="match-pill">96% match</span></div>
+        <div class="mini-scheme"><div><h5>Rajasthan Fee Waiver Scheme</h5><span>State Govt · Education</span></div><span class="match-pill">93% match</span></div>
+        <div class="mini-scheme"><div><h5>AICTE Pragati Scholarship</h5><span>Central Govt · Technical Education</span></div><span class="match-pill">88% match</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+ 
+<!-- DASHBOARD PREVIEW -->
+<section class="section" style="background:var(--card);">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="eyebrow">Your Dashboard</span>
+      <h2>Track everything in one calm, clear place</h2>
+      <p>Every scheme, application, and document — organized for you.</p>
+    </div>
+    <div class="dash-frame reveal">
+      <div class="dash-sidebar">
+        <div class="item active"><i class="fa-solid fa-grid-2"></i> Eligible Schemes</div>
+        <div class="item"><i class="fa-solid fa-bookmark"></i> Saved Schemes</div>
+        <div class="item"><i class="fa-solid fa-list-check"></i> Application Tracker</div>
+        <div class="item"><i class="fa-solid fa-comments"></i> AI Assistant</div>
+        <div class="item"><i class="fa-solid fa-user"></i> Profile Summary</div>
+      </div>
+      <div class="dash-main">
+        <div class="dash-top">
+          <h4>Welcome back, Aditi 👋</h4>
+          <span class="scheme-tag"><i class="fa-solid fa-bell"></i> 3 new notifications</span>
+        </div>
+        <div class="dash-cards">
+          <div class="dash-stat"><span>Eligible Schemes</span><strong>14</strong></div>
+          <div class="dash-stat"><span>Applications in Progress</span><strong>3</strong></div>
+          <div class="dash-stat"><span>Documents Ready</span><strong>7/9</strong></div>
+        </div>
+        <div class="dash-chart">
+          <div class="bar" style="height:40%"></div><div class="bar" style="height:65%"></div>
+          <div class="bar" style="height:50%"></div><div class="bar" style="height:80%"></div>
+          <div class="bar" style="height:55%"></div><div class="bar" style="height:90%"></div>
+          <div class="bar" style="height:70%"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+ 
+<!-- WHY CHOOSE -->
+<section class="section" id="why">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="eyebrow">Why JanMitra AI</span>
+      <h2>Built for real people, not paperwork</h2>
+    </div>
+    <div class="why-grid" id="whyGrid"></div>
+  </div>
+</section>
+ 
+<!-- STATS -->
+<section class="section">
+  <div class="container">
+    <div class="stats-band reveal">
+      <div class="stats-grid">
+        <div class="stat-item"><strong data-count="1000">0</strong><span>Government Schemes</span></div>
+        <div class="stat-item"><strong data-count="50000">0</strong><span>Citizens Assisted</span></div>
+        <div class="stat-item"><strong data-count="95" data-suffix="%">0</strong><span>Recommendation Accuracy</span></div>
+        <div class="stat-item"><strong style="font-size:clamp(30px,4vw,44px);color:#fff;">24×7</strong><span>AI Support</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+ 
+<!-- TESTIMONIALS -->
+<section class="section" style="background:var(--card);">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="eyebrow">Testimonials</span>
+      <h2>Real people, real outcomes</h2>
+    </div>
+    <div class="testi-grid" id="testiGrid"></div>
+  </div>
+</section>
+ 
+<!-- FAQ -->
+<section class="section" id="faq">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="eyebrow">FAQ</span>
+      <h2>Questions, answered</h2>
+    </div>
+    <div class="faq-list reveal" id="faqList"></div>
+  </div>
+</section>
+ 
+<!-- CTA -->
+<section class="section">
+  <div class="container">
+    <div class="cta-band reveal">
+      <h2>Start Discovering Government Benefits Today</h2>
+      <p>Let AI help you find the schemes you deserve.</p>
+      <div class="hero-ctas" style="justify-content:center;">
+        <a href="#" class="btn btn-primary btn-ripple">Check Eligibility</a>
+        <a href="#" class="btn btn-secondary btn-ripple">Talk to AI</a>
+      </div>
+    </div>
+  </div>
+</section>
+ 
+<!-- FOOTER -->
+<footer id="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a href="#" class="logo" style="margin-bottom:16px;"><span class="logo-mark"><i class="fa-solid fa-sparkles"></i></span>JanMitra AI</a>
+        <p style="color:var(--text-muted);font-size:14px;max-width:280px;">Helping every citizen discover the government support they're entitled to — in plain language, powered by AI.</p>
+      </div>
+      <div>
+        <h5>Company</h5>
+        <ul><li><a href="#">About</a></li><li><a href="#features">Features</a></li><li><a href="#footer">Contact</a></li></ul>
+      </div>
+      <div>
+        <h5>Legal</h5>
+        <ul><li><a href="#">Privacy Policy</a></li><li><a href="#">Terms of Service</a></li><li><a href="#">Help Center</a></li></ul>
+      </div>
+      <div>
+        <h5>Resources</h5>
+        <ul><li><a href="#how-it-works">How It Works</a></li><li><a href="#faq">FAQ</a></li><li><a href="#ai-showcase">AI Assistant</a></li></ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2026 JanMitra AI. All rights reserved.</p>
+      <div class="social-icons">
+        <a href="#" aria-label="GitHub"><i class="fa-brands fa-github"></i></a>
+        <a href="#" aria-label="LinkedIn"><i class="fa-brands fa-linkedin-in"></i></a>
+        <a href="#" aria-label="Twitter"><i class="fa-brands fa-x-twitter"></i></a>
+        <a href="#" aria-label="Email"><i class="fa-solid fa-envelope"></i></a>
+      </div>
+    </div>
+  </div>
+</footer>
+ 
+<script>
+// Navbar scroll
+const navbar = document.getElementById('navbar');
+window.addEventListener('scroll', () => {
+  navbar.classList.toggle('scrolled', window.scrollY > 40);
+});
+ 
+// Theme toggle
+const themeToggle = document.getElementById('themeToggle');
+const html = document.documentElement;
+themeToggle.addEventListener('click', () => {
+  const next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+  html.setAttribute('data-theme', next);
+  themeToggle.innerHTML = next === 'dark' ? '<i class="fa-solid fa-sun"></i>' : '<i class="fa-solid fa-moon"></i>';
+});
+ 
+// Ripple effect
+document.querySelectorAll('.btn-ripple').forEach(btn => {
+  btn.addEventListener('click', function(e){
+    const rect = this.getBoundingClientRect();
+    const ripple = document.createElement('span');
+    ripple.className = 'ripple';
+    ripple.style.left = (e.clientX - rect.left) + 'px';
+    ripple.style.top = (e.clientY - rect.top) + 'px';
+    this.appendChild(ripple);
+    setTimeout(()=>ripple.remove(), 600);
+  });
+});
+ 
+// Reveal on scroll
+const revealEls = document.querySelectorAll('.reveal');
+const io = new IntersectionObserver((entries)=>{
+  entries.forEach(entry => {
+    if(entry.isIntersecting){ entry.target.classList.add('visible'); io.unobserve(entry.target); }
+  });
+}, {threshold:0.15});
+revealEls.forEach(el => io.observe(el));
+ 
+// Animated counters
+const counters = document.querySelectorAll('[data-count]');
+const counterIO = new IntersectionObserver((entries)=>{
+  entries.forEach(entry=>{
+    if(entry.isIntersecting){
+      const el = entry.target;
+      const target = parseInt(el.getAttribute('data-count'));
+      const suffix = el.getAttribute('data-suffix') || (target >= 1000 ? '+' : '');
+      let cur = 0;
+      const step = Math.max(1, Math.ceil(target/60));
+      const timer = setInterval(()=>{
+        cur += step;
+        if(cur >= target){ cur = target; clearInterval(timer); }
+        el.textContent = cur.toLocaleString() + suffix;
+      }, 25);
+      counterIO.unobserve(el);
+    }
+  });
+}, {threshold:0.4});
+counters.forEach(c => counterIO.observe(c));
+ 
+// Features data
+const features = [
+  {icon:'fa-solid fa-brain', color:'linear-gradient(135deg,#2563EB,#60A5FA)', title:'AI Eligibility Checker', desc:'Instantly checks your profile against thousands of scheme criteria.'},
+  {icon:'fa-solid fa-comments', color:'linear-gradient(135deg,#10B981,#34D399)', title:'Natural Language AI Chat', desc:'Describe your situation in plain words — no forms required.'},
+  {icon:'fa-solid fa-magnifying-glass', color:'linear-gradient(135deg,#F59E0B,#FBBF24)', title:'Government Scheme Search', desc:'Search across central and state schemes in one place.'},
+  {icon:'fa-solid fa-list-check', color:'linear-gradient(135deg,#2563EB,#10B981)', title:'AI Document Checklist', desc:'Know exactly which documents you need, before you apply.'},
+  {icon:'fa-solid fa-route', color:'linear-gradient(135deg,#10B981,#2563EB)', title:'Application Guidance', desc:'Step-by-step guidance through the entire application process.'},
+  {icon:'fa-solid fa-wand-magic-sparkles', color:'linear-gradient(135deg,#F59E0B,#EF4444)', title:'Personalized Recommendations', desc:'Ranked results based on your unique profile and needs.'},
+  {icon:'fa-solid fa-language', color:'linear-gradient(135deg,#2563EB,#60A5FA)', title:'Multilingual Support', desc:'Get help in your preferred Indian language.'},
+  {icon:'fa-solid fa-shield-halved', color:'linear-gradient(135deg,#10B981,#34D399)', title:'Secure Login', desc:'Your data is encrypted and never shared without consent.'},
+  {icon:'fa-solid fa-bell', color:'linear-gradient(135deg,#F59E0B,#FBBF24)', title:'Notifications', desc:'Stay updated on deadlines, new schemes, and application status.'},
+];
+document.getElementById('featuresGrid').innerHTML = features.map(f => `
+  <div class="feature-card reveal">
+    <div class="feature-icon" style="background:${f.color}"><i class="${f.icon}"></i></div>
+    <h4>${f.title}</h4><p>${f.desc}</p>
+  </div>`).join('');
+ 
+// Why choose data
+const whys = [
+  {icon:'fa-solid fa-clock', title:'Save Hours of Research'},
+  {icon:'fa-solid fa-book-open', title:'Understand Complex Schemes Easily'},
+  {icon:'fa-solid fa-user-astronaut', title:'AI Personalized Guidance'},
+  {icon:'fa-solid fa-message', title:'Simple Language'},
+  {icon:'fa-solid fa-bullseye', title:'Accurate Recommendations'},
+  {icon:'fa-solid fa-lock', title:'Secure Platform'},
+  {icon:'fa-solid fa-gauge-high', title:'Fast Results'},
+  {icon:'fa-solid fa-gift', title:'Free to Use'},
+];
+document.getElementById('whyGrid').innerHTML = whys.map(w => `
+  <div class="why-card reveal"><div class="why-icon"><i class="${w.icon}"></i></div><h4>${w.title}</h4></div>`).join('');
+ 
+// Testimonials
+const testis = [
+  {name:'Aditi Sharma', role:'Engineering Student', initials:'AS', quote:'Found 3 scholarships I never knew existed, in under 5 minutes.'},
+  {name:'Ramesh Patel', role:'Farmer', initials:'RP', quote:'Finally someone explains these schemes in language I understand.'},
+  {name:'Sunita Devi', role:'Business Owner', initials:'SD', quote:'The document checklist saved me two trips to the block office.'},
+  {name:'Mohan Lal', role:'Senior Citizen', initials:'ML', quote:'My son set it up for me — now I check it myself every week.'},
+  {name:'Priya Nair', role:'NGO Volunteer', initials:'PN', quote:'We use JanMitra AI to help entire villages find benefits faster.'},
+  {name:'Karan Mehta', role:'Business Owner', initials:'KM', quote:'The AI chat felt like talking to a knowledgeable friend, not a form.'},
+];
+document.getElementById('testiGrid').innerHTML = testis.map(t => `
+  <div class="testi-card reveal">
+    <div class="testi-top"><div class="avatar">${t.initials}</div><div><h5>${t.name}</h5><span>${t.role}</span></div></div>
+    <p>"${t.quote}"</p>
+    <div class="stars">★★★★★</div>
+  </div>`).join('');
+ 
+// FAQ
+const faqs = [
+  {q:'How does AI determine eligibility?', a:'Our AI compares your profile — age, income, location, occupation, and more — against the official criteria of over 1000 government schemes to find your best matches.'},
+  {q:'Is my data secure?', a:'Yes. Your information is encrypted end-to-end and is never sold or shared with third parties without your explicit consent.'},
+  {q:'Is JanMitra AI free?', a:'Yes, JanMitra AI is completely free for citizens to discover and track government schemes.'},
+  {q:'Can I apply directly?', a:'JanMitra AI guides you step-by-step and links you to the official application portal for each scheme.'},
+  {q:'Does it support state schemes?', a:'Yes, we cover both central government schemes and state-specific schemes across India.'},
+];
+document.getElementById('faqList').innerHTML = faqs.map((f,i) => `
+  <div class="faq-item ${i===0?'open':''}">
+    <div class="faq-q">${f.q}<i class="fa-solid fa-plus"></i></div>
+    <div class="faq-a">${f.a}</div>
+  </div>`).join('');
+document.querySelectorAll('.faq-q').forEach(q => {
+  q.addEventListener('click', () => {
+    const item = q.parentElement;
+    const wasOpen = item.classList.contains('open');
+    document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+    if(!wasOpen) item.classList.add('open');
+  });
+});
+</script>
+</body>
+</html>
