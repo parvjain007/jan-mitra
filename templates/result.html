@@ -1,0 +1,1078 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Matching Schemes | Government Welfare Portal</title>
+
+    <style>
+        :root {
+            --primary: #0f5132;
+            --primary-dark: #073b26;
+            --primary-light: #e8f5ee;
+
+            --accent: #f4a623;
+            --accent-light: #fff4dc;
+
+            --blue: #2563eb;
+            --blue-light: #eff6ff;
+
+            --text: #17221c;
+            --text-secondary: #5f6b64;
+            --muted: #7b857f;
+
+            --background: #f5f7f6;
+            --white: #ffffff;
+
+            --border: #e3e8e5;
+            --danger: #b42318;
+            --danger-light: #fff0ee;
+
+            --shadow-sm: 0 2px 8px rgba(16, 42, 28, 0.05);
+            --shadow-md: 0 10px 30px rgba(16, 42, 28, 0.08);
+
+            --radius: 14px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI",
+                         Roboto, Arial, sans-serif;
+            background: var(--background);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        /* =========================
+           TOP NAVBAR
+        ========================== */
+
+        .navbar {
+            height: 72px;
+            background: var(--white);
+            border-bottom: 1px solid var(--border);
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            padding: 0 6%;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: var(--text);
+        }
+
+        .brand-icon {
+            width: 42px;
+            height: 42px;
+
+            background: var(--primary);
+            color: white;
+
+            border-radius: 11px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            font-size: 21px;
+            font-weight: 800;
+        }
+
+        .brand-text strong {
+            display: block;
+            font-size: 16px;
+            font-weight: 750;
+        }
+
+        .brand-text span {
+            display: block;
+            color: var(--muted);
+            font-size: 11px;
+            margin-top: 2px;
+        }
+
+        .nav-badge {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+
+            background: var(--primary-light);
+            color: var(--primary);
+
+            padding: 8px 13px;
+            border-radius: 30px;
+
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .status-dot {
+            width: 7px;
+            height: 7px;
+            background: #22a35a;
+            border-radius: 50%;
+        }
+
+        /* =========================
+           MAIN CONTAINER
+        ========================== */
+
+        .container {
+            width: min(1100px, 92%);
+            margin: auto;
+            padding: 38px 0 70px;
+        }
+
+        /* =========================
+           BACK BUTTON
+        ========================== */
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+
+            text-decoration: none;
+
+            color: var(--primary);
+            font-size: 14px;
+            font-weight: 650;
+
+            margin-bottom: 28px;
+
+            transition: 0.2s ease;
+        }
+
+        .back-link:hover {
+            gap: 12px;
+            color: var(--primary-dark);
+        }
+
+        /* =========================
+           HERO
+        ========================== */
+
+        .hero {
+            background:
+                linear-gradient(
+                    135deg,
+                    var(--primary-dark),
+                    var(--primary)
+                );
+
+            color: white;
+
+            border-radius: 20px;
+
+            padding: 34px 38px;
+
+            margin-bottom: 28px;
+
+            position: relative;
+            overflow: hidden;
+
+            box-shadow: var(--shadow-md);
+        }
+
+        .hero::before {
+            content: "";
+            position: absolute;
+
+            width: 220px;
+            height: 220px;
+
+            border-radius: 50%;
+
+            background: rgba(255,255,255,0.05);
+
+            right: -70px;
+            top: -100px;
+        }
+
+        .hero::after {
+            content: "";
+            position: absolute;
+
+            width: 150px;
+            height: 150px;
+
+            border-radius: 50%;
+
+            background: rgba(244,166,35,0.12);
+
+            right: 100px;
+            bottom: -100px;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+
+            background: rgba(255,255,255,0.12);
+
+            padding: 7px 12px;
+
+            border-radius: 30px;
+
+            font-size: 12px;
+            font-weight: 700;
+
+            margin-bottom: 15px;
+        }
+
+        .hero h1 {
+            font-size: clamp(27px, 4vw, 38px);
+            line-height: 1.15;
+            margin-bottom: 10px;
+
+            letter-spacing: -0.7px;
+        }
+
+        .hero p {
+            color: rgba(255,255,255,0.78);
+
+            font-size: 15px;
+            line-height: 1.6;
+
+            max-width: 650px;
+        }
+
+        .category-highlight {
+            color: #ffd98a;
+            font-weight: 750;
+        }
+
+        /* =========================
+           RESULTS HEADER
+        ========================== */
+
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            margin-bottom: 18px;
+        }
+
+        .results-title {
+            font-size: 18px;
+            font-weight: 750;
+        }
+
+        .result-count {
+            color: var(--text-secondary);
+            font-size: 13px;
+            margin-top: 4px;
+        }
+
+        .count-badge {
+            background: var(--accent-light);
+            color: #9a5c00;
+
+            padding: 8px 13px;
+
+            border-radius: 30px;
+
+            font-size: 12px;
+            font-weight: 750;
+        }
+
+        /* =========================
+           SCHEME GRID
+        ========================== */
+
+        .scheme-list {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 18px;
+        }
+
+        /* =========================
+           SCHEME CARD
+        ========================== */
+
+        .scheme-card {
+            background: var(--white);
+
+            border: 1px solid var(--border);
+
+            border-radius: var(--radius);
+
+            padding: 24px;
+
+            position: relative;
+
+            box-shadow: var(--shadow-sm);
+
+            transition:
+                transform 0.25s ease,
+                box-shadow 0.25s ease,
+                border-color 0.25s ease;
+        }
+
+        .scheme-card:hover {
+            transform: translateY(-4px);
+
+            border-color: #cbd9d0;
+
+            box-shadow: var(--shadow-md);
+        }
+
+        .card-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+
+            gap: 15px;
+
+            margin-bottom: 15px;
+        }
+
+        /* Level badge */
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+
+            background: var(--primary-light);
+            color: var(--primary);
+
+            border: 1px solid #d5ebde;
+
+            padding: 6px 10px;
+
+            border-radius: 7px;
+
+            font-size: 10.5px;
+            font-weight: 800;
+
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .scheme-icon {
+            width: 40px;
+            height: 40px;
+
+            background: var(--accent-light);
+
+            color: #a56608;
+
+            border-radius: 10px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            font-size: 18px;
+
+            flex-shrink: 0;
+        }
+
+        .scheme-card h3 {
+            font-size: 19px;
+            line-height: 1.35;
+
+            margin-bottom: 18px;
+
+            color: var(--text);
+        }
+
+        /* =========================
+           INFORMATION ROWS
+        ========================== */
+
+        .info-section {
+            padding: 14px 0;
+
+            border-top: 1px solid var(--border);
+        }
+
+        .info-label {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+
+            font-size: 11px;
+
+            color: var(--primary);
+
+            font-weight: 800;
+
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+
+            margin-bottom: 6px;
+        }
+
+        .info-label span {
+            font-size: 13px;
+        }
+
+        .info-text {
+            color: var(--text-secondary);
+
+            font-size: 13.5px;
+
+            line-height: 1.6;
+        }
+
+        /* =========================
+           BENEFITS
+        ========================== */
+
+        .benefit-box {
+            background: #f8fbf9;
+
+            border: 1px solid #e3eee7;
+
+            border-radius: 10px;
+
+            padding: 12px 13px;
+        }
+
+        .benefit-box .info-text {
+            color: #3d5146;
+        }
+
+        /* =========================
+           DOCUMENTS
+        ========================== */
+
+        .documents {
+            background: var(--blue-light);
+
+            border: 1px solid #dbeafe;
+
+            border-radius: 10px;
+
+            padding: 12px 13px;
+        }
+
+        .documents .info-label {
+            color: var(--blue);
+        }
+
+        /* =========================
+           CARD FOOTER
+        ========================== */
+
+        .card-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            border-top: 1px solid var(--border);
+
+            margin-top: 14px;
+            padding-top: 15px;
+        }
+
+        .verified {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+
+            font-size: 11px;
+
+            color: var(--muted);
+        }
+
+        .verified-icon {
+            width: 17px;
+            height: 17px;
+
+            border-radius: 50%;
+
+            background: var(--primary-light);
+            color: var(--primary);
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            font-size: 10px;
+            font-weight: 900;
+        }
+
+        .details-link {
+            color: var(--primary);
+
+            font-size: 12px;
+            font-weight: 750;
+
+            text-decoration: none;
+        }
+
+        .details-link:hover {
+            text-decoration: underline;
+        }
+
+        /* =========================
+           ERROR
+        ========================== */
+
+        .error-container {
+            background: var(--danger-light);
+
+            border: 1px solid #f4c7c2;
+
+            border-left: 5px solid var(--danger);
+
+            border-radius: 12px;
+
+            padding: 20px 22px;
+
+            display: flex;
+            gap: 14px;
+
+            align-items: flex-start;
+        }
+
+        .error-icon {
+            width: 38px;
+            height: 38px;
+
+            flex-shrink: 0;
+
+            background: white;
+
+            color: var(--danger);
+
+            border-radius: 9px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            font-weight: 800;
+        }
+
+        .error-container h3 {
+            font-size: 16px;
+            margin-bottom: 5px;
+            color: #8e1d14;
+        }
+
+        .error-container p {
+            font-size: 13.5px;
+            color: #71342e;
+            line-height: 1.5;
+        }
+
+        /* =========================
+           EMPTY STATE
+        ========================== */
+
+        .empty-state {
+            background: var(--white);
+
+            border: 1px solid var(--border);
+
+            border-radius: 16px;
+
+            padding: 55px 25px;
+
+            text-align: center;
+
+            box-shadow: var(--shadow-sm);
+        }
+
+        .empty-icon {
+            width: 68px;
+            height: 68px;
+
+            margin: 0 auto 18px;
+
+            border-radius: 50%;
+
+            background: var(--accent-light);
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            font-size: 28px;
+        }
+
+        .empty-state h2 {
+            font-size: 21px;
+            margin-bottom: 8px;
+        }
+
+        .empty-state p {
+            max-width: 480px;
+
+            margin: auto;
+
+            color: var(--text-secondary);
+
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .empty-button {
+            display: inline-flex;
+
+            margin-top: 22px;
+
+            background: var(--primary);
+
+            color: white;
+
+            padding: 11px 18px;
+
+            border-radius: 8px;
+
+            text-decoration: none;
+
+            font-size: 13px;
+            font-weight: 700;
+
+            transition: 0.2s ease;
+        }
+
+        .empty-button:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+
+        /* =========================
+           FOOTER
+        ========================== */
+
+        footer {
+            border-top: 1px solid var(--border);
+
+            margin-top: 20px;
+
+            padding-top: 22px;
+
+            text-align: center;
+
+            color: var(--muted);
+
+            font-size: 11.5px;
+
+            line-height: 1.6;
+        }
+
+        /* =========================
+           RESPONSIVE
+        ========================== */
+
+        @media (max-width: 800px) {
+
+            .scheme-list {
+                grid-template-columns: 1fr;
+            }
+
+            .navbar {
+                padding: 0 4%;
+            }
+
+            .container {
+                width: 92%;
+            }
+
+        }
+
+        @media (max-width: 550px) {
+
+            .navbar {
+                height: 65px;
+            }
+
+            .brand-icon {
+                width: 36px;
+                height: 36px;
+                font-size: 18px;
+            }
+
+            .brand-text strong {
+                font-size: 14px;
+            }
+
+            .brand-text span {
+                font-size: 9px;
+            }
+
+            .nav-badge {
+                display: none;
+            }
+
+            .container {
+                padding-top: 25px;
+            }
+
+            .hero {
+                padding: 26px 22px;
+                border-radius: 15px;
+            }
+
+            .hero h1 {
+                font-size: 27px;
+            }
+
+            .hero p {
+                font-size: 13px;
+            }
+
+            .results-header {
+                align-items: flex-start;
+            }
+
+            .scheme-card {
+                padding: 19px;
+            }
+
+            .scheme-card h3 {
+                font-size: 17px;
+            }
+
+            .count-badge {
+                font-size: 10px;
+                padding: 7px 9px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- =========================
+         NAVBAR
+    ========================== -->
+
+    <header class="navbar">
+
+        <a href="/" class="brand">
+
+            <div class="brand-icon">
+                ✓
+            </div>
+
+            <div class="brand-text">
+                <strong>WelfareConnect</strong>
+                <span>Government Scheme Finder</span>
+            </div>
+
+        </a>
+
+        <div class="nav-badge">
+            <span class="status-dot"></span>
+            Public Service Portal
+        </div>
+
+    </header>
+
+
+    <!-- =========================
+         MAIN
+    ========================== -->
+
+    <main class="container">
+
+        <!-- Back -->
+
+        <a href="/" class="back-link">
+            ← Back to scheme finder
+        </a>
+
+
+        <!-- =========================
+             ERROR STATE
+        ========================== -->
+
+        {% if error %}
+
+            <div class="error-container">
+
+                <div class="error-icon">
+                    !
+                </div>
+
+                <div>
+                    <h3>Something went wrong</h3>
+
+                    <p>
+                        {{ error }}
+                    </p>
+                </div>
+
+            </div>
+
+        {% else %}
+
+            <!-- =========================
+                 HERO
+            ========================== -->
+
+            <section class="hero">
+
+                <div class="hero-content">
+
+                    <div class="hero-label">
+                        ✓ Scheme Matching Complete
+                    </div>
+
+                    <h1>
+                        Welfare schemes matched for you
+                    </h1>
+
+                    <p>
+                        We found government welfare schemes related to
+                        <span class="category-highlight">
+                            {{ category }}
+                        </span>.
+                        Review the eligibility, benefits and required
+                        documents below.
+                    </p>
+
+                </div>
+
+            </section>
+
+
+            <!-- =========================
+                 RESULTS HEADER
+            ========================== -->
+
+            <div class="results-header">
+
+                <div>
+
+                    <div class="results-title">
+                        Recommended schemes
+                    </div>
+
+                    <p class="result-count">
+                        Based on the category you selected
+                    </p>
+
+                </div>
+
+
+                <div class="count-badge">
+
+                    {% if schemes|length == 0 %}
+                        0 schemes
+                    {% elif schemes|length == 1 %}
+                        1 scheme
+                    {% else %}
+                        {{ schemes|length }} schemes
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+
+            <!-- =========================
+                 EMPTY STATE
+            ========================== -->
+
+            {% if schemes|length == 0 %}
+
+                <div class="empty-state">
+
+                    <div class="empty-icon">
+                        🔍
+                    </div>
+
+                    <h2>
+                        No matching schemes found
+                    </h2>
+
+                    <p>
+                        We couldn't find any welfare schemes matching
+                        the category "{{ category }}".
+                        Try selecting a different category or search
+                        again.
+                    </p>
+
+                    <a href="/" class="empty-button">
+                        ← Search again
+                    </a>
+
+                </div>
+
+
+            {% else %}
+
+
+                <!-- =========================
+                     SCHEME CARDS
+                ========================== -->
+
+                <div class="scheme-list">
+
+                    {% for scheme in schemes %}
+
+                    <article class="scheme-card">
+
+                        <!-- Card Top -->
+
+                        <div class="card-top">
+
+                            <span class="badge">
+                                {{ scheme.level }}
+                            </span>
+
+                            <div class="scheme-icon">
+                                ★
+                            </div>
+
+                        </div>
+
+
+                        <!-- Scheme Name -->
+
+                        <h3>
+                            {{ scheme.scheme_name }}
+                        </h3>
+
+
+                        <!-- Details -->
+
+                        <div class="info-section">
+
+                            <div class="info-label">
+                                <span>ⓘ</span>
+                                Details
+                            </div>
+
+                            <p class="info-text">
+                                {{ scheme.details }}
+                            </p>
+
+                        </div>
+
+
+                        <!-- Benefits -->
+
+                        <div class="info-section">
+
+                            <div class="benefit-box">
+
+                                <div class="info-label">
+                                    <span>✓</span>
+                                    Benefits
+                                </div>
+
+                                <p class="info-text">
+                                    {{ scheme.benefits }}
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- Eligibility -->
+
+                        <div class="info-section">
+
+                            <div class="info-label">
+                                <span>◉</span>
+                                Eligibility
+                            </div>
+
+                            <p class="info-text">
+                                {{ scheme.eligibility }}
+                            </p>
+
+                        </div>
+
+
+                        <!-- Documents -->
+
+                        {% if scheme.documents %}
+
+                        <div class="info-section">
+
+                            <div class="documents">
+
+                                <div class="info-label">
+                                    <span>▣</span>
+                                    Documents Required
+                                </div>
+
+                                <p class="info-text">
+                                    {{ scheme.documents }}
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                        {% endif %}
+
+
+                        <!-- Card Footer -->
+
+                        <div class="card-footer">
+
+                            <div class="verified">
+
+                                <span class="verified-icon">
+                                    ✓
+                                </span>
+
+                                Scheme information
+
+                            </div>
+
+                            <a href="#" class="details-link">
+                                View details →
+                            </a>
+
+                        </div>
+
+                    </article>
+
+                    {% endfor %}
+
+                </div>
+
+            {% endif %}
+
+        {% endif %}
+
+
+        <!-- =========================
+             FOOTER
+        ========================== -->
+
+        <footer>
+
+            WelfareConnect · Government Welfare Scheme Finder
+            <br>
+
+            Information should be verified with the official government
+            department before applying.
+
+        </footer>
+
+    </main>
+
+</body>
+</html>

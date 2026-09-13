@@ -1,86 +1,160 @@
-from flask import Flask, jsonify, send_from_directory, request
-app = Flask(__name__, static_folder=".", static_url_path="")
-schemes = [
-    {
-        "name": "PM-KISAN",
-        "min_age": 0,
-        "max_age": 100,
-        "max_income": None,
-        "states": "All",
-        "occupation": "Farmer",
-        "category": "Any",
-        "benefit": "Rs. 6,000/year income support for farmer families"
-    },
-    {
-        "name": "IGNOAPS",
-        "min_age": 60,
-        "max_age": 150,
-        "max_income": 100000,
-        "states": "All",
-        "occupation": "Any",
-        "category": "Any",
-        "benefit": "Monthly pension of Rs. 200-500 for senior citizens"
-    },
-    {
-        "name": "PMMY",
-        "min_age": 18,
-        "max_age": 65,
-        "max_income": None,
-        "states": "All",
-        "occupation": "Business Owner",
-        "category": "Any",
-        "benefit": "Collateral-free business loans up to Rs. 10 lakh"
-    },
-    {
-        "name": "NMMS",
-        "min_age": 0,
-        "max_age": 100,
-        "max_income": 350000,
-        "states": "All",
-        "occupation": "Student",
-        "category": "Any",
-        "benefit": "Rs. 12,000/year scholarship for meritorious students"
-    }
-]
-def check_match(scheme, user):
-    age = int(user["age"])          # convert "18" (text) into 18 (number)
-    income = int(user["income"])    # same for income
+from flask import Flask, jsonify, send_from_directory, request , render_template
+import mysql.connector
+from mysql.connector import Error
 
-    # Age check
+app = Flask(__name__, static_folder=".", static_url_path="")
+
+# ---- MySQL connection settings ----
+# Update these to match your MySQL server.
+DB_CONFIG = {
+    "host": "localhost",
+    "user": "root",
+    "password": "parvdaddy",
+    "database": "janmitra"
+}
+
+
+def get_db_connection():
+    return mysql.connector.connect(**DB_CONFIG)
+
+
+def get_schemes_from_db():
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)  # returns rows as dicts, like sqlite3.Row
+    cursor.execute("SELECT * FROM scheme_category")
+    rows = cursor.fetchall()
+    cursor.close()
+    conn.close()
+    return rows
+
+
+def check_match(scheme, user):
+    age = int(user["age"])
+    income = int(user["income"])
+
     if age < scheme["min_age"] or age > scheme["max_age"]:
         return False
-
-    # Income check (only matters if the scheme has an income limit)
     if scheme["max_income"] is not None and income > scheme["max_income"]:
         return False
-
-    # State check (skip if scheme applies to all states)
     if scheme["states"] != "All" and scheme["states"] != user["state"]:
         return False
-
-    # Occupation check (skip if scheme has no occupation restriction)
     if scheme["occupation"] != "Any" and scheme["occupation"] != user["occupation"]:
         return False
-
-    # Category check (skip if scheme has no category restriction)
-    if scheme["category"] != "Any" and scheme["category"] != user["category"]:
+    if scheme["scheme_category"] != "Any" and scheme["scheme_category"] != user["schemeCategory"]:
         return False
-
-    # If none of the above returned False, every condition passed
     return True
+
+
 @app.route("/")
 def home():
+    return send_from_directory(".", "index.html")
+
+@app.route("/check-eligibility")
+def eligibility():
     return send_from_directory(".", "eligibility.html")
+
+
 @app.route("/api/check-eligibility", methods=["POST"])
 def check_eligibility():
-    data = request.get_json()
-    print(data)
+    user = request.get_json()
 
-    matched_schemes = []
-    for scheme in schemes:
-        if check_match(scheme, data):
-            matched_schemes.append(scheme)
+    schemes = get_schemes_from_db()
+    matches = [scheme for scheme in schemes if check_match(scheme, user)]
 
-    return jsonify({"matches": matched_schemes})
+    return jsonify({"matches": matches})
+
+
+def insert_application(data):
+    """Insert a form submission into the eligibility_applications table."""
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute(
+        """
+        INSERT INTO eligibility_applications
+            (ea_name, ea_email, ea_mobile, ea_age, ea_state, ea_income, ea_scheme_category)
+        VALUES
+            (%s, %s, %s, %s, %s, %s, %s)
+        """,
+        (
+            data["name"],
+            data["email"],
+            data["mobile"],
+            data["age"],
+            data["state"],
+            data["income"],
+            data["schemeCategory"]
+        )
+    )
+    conn.commit()
+    cursor.close()
+    conn.close()
+
+def find_existing_application(email, mobile):
+    """Return the existing row if this email or mobile is already registered, else None."""
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    cursor.execute(
+        """
+        SELECT ea_id, ea_email, ea_mobile
+        FROM eligibility_applications
+        WHERE ea_email = %s OR ea_mobile = %s
+        LIMIT 1
+        """,
+        (email, mobile)
+    )
+    row = cursor.fetchone()
+    cursor.close()
+    conn.close()
+    return row
+
+@app.route('/submit', methods=['POST'])
+def submit():
+    user = request.form
+    selected_category = user["schemeCategory"]
+
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    cursor.execute(
+        """
+        SELECT scheme_name, details, benefits, scheme_category, slevel
+        FROM scheme_library
+        WHERE scheme_category LIKE %s
+        LIMIT 20
+        """,
+        (f"%{selected_category}%",)
+    )
+    schemes = cursor.fetchall()
+    cursor.close()
+    conn.close()
+
+    existing = find_existing_application(user["email"], user["mobile"])
+    if not existing:
+        insert_application(user)
+
+    return render_template(
+        "result.html",
+        error=None,
+        category=selected_category,
+        schemes=schemes
+    )
+
+@app.route("/dashboard")
+def dashboard():
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    cursor.execute(
+        """
+        SELECT ea_id, ea_name, ea_email, ea_mobile, ea_age, ea_state, ea_income, ea_scheme_category, ea_created_at
+        FROM eligibility_applications
+        ORDER BY ea_created_at DESC
+        """
+    )
+    applications = cursor.fetchall()
+    cursor.close()
+    conn.close()
+    return render_template("dashboard.html", applications=applications)
+
+
+
 if __name__ == "__main__":
     app.run(debug=True, port=5000)

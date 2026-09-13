@@ -1,199 +1,401 @@
-    <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>Eligibility Form</title>
+    <title>Scheme Eligibility Check</title>
 
     <style>
+        :root {
+            --ink: #1F2A24;
+            --sand: #F3EEE3;
+            --paper: #FFFFFF;
+            --teal: #1B4B43;
+            --teal-deep: #123530;
+            --marigold: #E0912E;
+            --marigold-soft: #F6E4C6;
+            --line: #DCD4C1;
+            --error: #B3432B;
+        }
+
+        * { box-sizing: border-box; }
+
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f2f2f2;
+            font-family: "Georgia", "Iowan Old Style", serif;
+            background: var(--sand);
             margin: 0;
             padding: 0;
+            color: var(--ink);
         }
 
-        .container {
-            width: 400px;
-            margin: 50px auto;
-            background-color: white;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        .page {
+            max-width: 620px;
+            margin: 0 auto;
+            padding: 48px 20px 80px;
         }
 
-        h2 {
-            text-align: center;
-            margin-bottom: 25px;
+        .masthead {
+            border-bottom: 3px solid var(--teal);
+            padding-bottom: 18px;
+            margin-bottom: 36px;
+        }
+
+        .masthead .kicker {
+            font-family: "Helvetica Neue", Arial, sans-serif;
+            font-size: 13px;
+            letter-spacing: 0.02em;
+            color: var(--teal);
+            margin: 0 0 6px;
+        }
+
+        .masthead h1 {
+            font-size: 30px;
+            line-height: 1.15;
+            margin: 0 0 8px;
+            font-weight: 600;
+        }
+
+        .masthead p {
+            font-family: "Helvetica Neue", Arial, sans-serif;
+            font-size: 15px;
+            color: #55584f;
+            margin: 0;
+            max-width: 50ch;
+        }
+
+        form {
+            background: var(--paper);
+            border: 1px solid var(--line);
+            border-radius: 6px;
+            padding: 32px 32px 28px;
+        }
+
+        .section-label {
+            font-family: "Helvetica Neue", Arial, sans-serif;
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--teal);
+            margin: 0 0 4px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--line);
+        }
+
+        .section-label.spaced {
+            margin-top: 30px;
+        }
+
+        .field {
+            margin-top: 18px;
+        }
+
+        .row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
         }
 
         label {
             display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
+            font-family: "Helvetica Neue", Arial, sans-serif;
+            font-size: 13.5px;
+            font-weight: 600;
+            color: #3c4038;
+            margin-bottom: 6px;
+        }
+
+        label .hint {
+            font-weight: 400;
+            color: #8b8e83;
         }
 
         input,
         select {
             width: 100%;
-            padding: 10px;
-            margin-bottom: 15px;
-            box-sizing: border-box;
-            border: 1px solid #ccc;
-            border-radius: 5px;
+            font-family: "Helvetica Neue", Arial, sans-serif;
+            font-size: 15px;
+            padding: 11px 12px;
+            border: 1px solid #C9C1AC;
+            border-radius: 4px;
+            background: var(--paper);
+            color: var(--ink);
+            transition: border-color 0.15s ease, box-shadow 0.15s ease;
+        }
+
+        input::placeholder {
+            color: #A6A092;
+        }
+
+        input:focus,
+        select:focus {
+            outline: none;
+            border-color: var(--teal);
+            box-shadow: 0 0 0 3px rgba(27, 75, 67, 0.14);
+        }
+
+        input:invalid:not(:placeholder-shown),
+        select:invalid {
+            border-color: var(--error);
+        }
+
+        select {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9' viewBox='0 0 14 9'%3E%3Cpath d='M1 1L7 7L13 1' stroke='%231B4B43' stroke-width='1.6' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 14px center;
+            padding-right: 34px;
         }
 
         button {
             width: 100%;
-            padding: 12px;
-            background-color: #007bff;
-            color: white;
+            margin-top: 30px;
+            padding: 14px;
+            background: var(--teal);
+            color: var(--paper);
             border: none;
-            border-radius: 5px;
-            font-size: 16px;
+            border-radius: 4px;
+            font-family: "Helvetica Neue", Arial, sans-serif;
+            font-size: 15.5px;
+            font-weight: 600;
             cursor: pointer;
+            transition: background 0.15s ease;
         }
 
         button:hover {
-            background-color: #0056b3;
+            background: var(--teal-deep);
         }
 
-        /* Empty results area */
+        button:active {
+            transform: translateY(1px);
+        }
+
+        .note {
+            font-family: "Helvetica Neue", Arial, sans-serif;
+            font-size: 12.5px;
+            color: #8b8e83;
+            margin-top: 10px;
+        }
+
         #results {
-            margin-top: 25px;
+            margin-top: 28px;
+        }
+
+        #results:empty {
+            margin-top: 0;
+        }
+
+        .scheme-card {
+            background: var(--paper);
+            border: 1px solid var(--line);
+            border-left: 4px solid var(--marigold);
+            border-radius: 4px;
+            padding: 16px 18px;
+            margin-top: 14px;
+        }
+
+        .scheme-card h3 {
+            font-size: 17px;
+            margin: 0 0 6px;
+        }
+
+        .scheme-card p {
+            font-family: "Helvetica Neue", Arial, sans-serif;
+            font-size: 14.5px;
+            color: #4a4d44;
+            margin: 0;
+            line-height: 1.5;
+        }
+
+        .empty-state {
+            font-family: "Helvetica Neue", Arial, sans-serif;
+            font-size: 14.5px;
+            color: #6b6e63;
+            background: var(--marigold-soft);
+            border-radius: 4px;
+            padding: 14px 16px;
+        }
+
+        @media (max-width: 480px) {
+            .page { padding: 32px 16px 60px; }
+            form { padding: 24px 20px; }
+            .row { grid-template-columns: 1fr; gap: 0; }
+            .masthead h1 { font-size: 25px; }
         }
     </style>
 </head>
 
 <body>
 
-    <div class="container">
+    <div class="page">
 
-        <form id="eligibilityForm">
+        <div class="masthead">
+            <p class="kicker">Government Welfare Schemes</p>
+            <h1>Check your eligibility</h1>
+            <p>Fill in your details below to see which welfare schemes you may qualify for.</p>
+        </div>
 
-            <h2>Eligibility Form</h2>
+        <form id="eligibilityForm" action="/submit" method="POST" >
 
-            <!-- Age -->
-            <label for="age">Age:</label>
-            <input
-                type="number"
-                id="age"
-                name="age"
-                placeholder="Enter your age"
-                required
-            >
+            <p class="section-label">Your details</p>
 
-            <!-- State Dropdown -->
-            <label for="state">State:</label>
-            <select id="state" name="state" required>
-                <option value="">Select State</option>
-                <option value="Rajasthan">Rajasthan</option>
-                <option value="Delhi">Delhi</option>
-                <option value="Gujarat">Gujarat</option>
-                <option value="Haryana">Haryana</option>
-                <option value="Punjab">Punjab</option>
-            </select>
+            <div class="field">
+                <label for="name">Full name</label>
+                <input type="text" id="name" name="name" placeholder="As per your ID" required>
+            </div>
 
-            <!-- City - Manual Entry -->
-            <label for="city">City:</label>
-            <input
-                type="text"
-                id="city"
-                name="city"
-                placeholder="Enter your city"
-                required
-            >
+            <div class="row">
+                <div class="field">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" placeholder="you@example.com" required>
+                </div>
+                <div class="field">
+                    <label for="mobile">Mobile number</label>
+                    <input type="tel" id="mobile" name="mobile" placeholder="10-digit number" pattern="[0-9]{10}" maxlength="10" required>
+                </div>
+            </div>
 
-            <!-- Annual Income -->
-            <label for="income">Annual Income:</label>
-            <input
-                type="number"
-                id="income"
-                name="income"
-                placeholder="Enter annual income"
-                required
-            >
+            <div class="row">
+                <div class="field">
+                    <label for="age">Age</label>
+                    <input type="number" id="age" name="age" placeholder="Years" min="0" max="120" required>
+                </div>
+                <div class="field">
+                    <label for="state">State</label>
+                    <select id="state" name="state" required>
+    <option value="" disabled selected>Select state</option>
+    <option value="Andhra Pradesh">Andhra Pradesh</option>
+    <option value="Arunachal Pradesh">Arunachal Pradesh</option>
+    <option value="Assam">Assam</option>
+    <option value="Bihar">Bihar</option>
+    <option value="Chhattisgarh">Chhattisgarh</option>
+    <option value="Goa">Goa</option>
+    <option value="Gujarat">Gujarat</option>
+    <option value="Haryana">Haryana</option>
+    <option value="Himachal Pradesh">Himachal Pradesh</option>
+    <option value="Jharkhand">Jharkhand</option>
+    <option value="Karnataka">Karnataka</option>
+    <option value="Kerala">Kerala</option>
+    <option value="Madhya Pradesh">Madhya Pradesh</option>
+    <option value="Maharashtra">Maharashtra</option>
+    <option value="Manipur">Manipur</option>
+    <option value="Meghalaya">Meghalaya</option>
+    <option value="Mizoram">Mizoram</option>
+    <option value="Nagaland">Nagaland</option>
+    <option value="Odisha">Odisha</option>
+    <option value="Punjab">Punjab</option>
+    <option value="Rajasthan">Rajasthan</option>
+    <option value="Sikkim">Sikkim</option>
+    <option value="Tamil Nadu">Tamil Nadu</option>
+    <option value="Telangana">Telangana</option>
+    <option value="Tripura">Tripura</option>
+    <option value="Uttar Pradesh">Uttar Pradesh</option>
+    <option value="Uttarakhand">Uttarakhand</option>
+    <option value="West Bengal">West Bengal</option>
+    <option value="Andaman and Nicobar Islands">Andaman and Nicobar Islands</option>
+    <option value="Chandigarh">Chandigarh</option>
+    <option value="Dadra and Nagar Haveli and Daman and Diu">Dadra and Nagar Haveli and Daman and Diu</option>
+    <option value="Delhi">Delhi</option>
+    <option value="Jammu and Kashmir">Jammu and Kashmir</option>
+    <option value="Ladakh">Ladakh</option>
+    <option value="Lakshadweep">Lakshadweep</option>
+    <option value="Puducherry">Puducherry</option>
+</select>
+                </div>
+            </div>
 
-            <!-- Occupation Dropdown -->
-            <label for="occupation">Occupation:</label>
-            <select id="occupation" name="occupation" required>
-                <option value="">Select Occupation</option>
-                <option value="Student">Student</option>
-                <option value="Farmer">Farmer</option>
-                <option value="Business Owner">Business Owner</option>
-                <option value="Other">Other</option>
-            </select>
+            <p class="section-label spaced">Income</p>
 
-            <!-- Category Dropdown -->
-            <label for="category">Category:</label>
-            <select id="category" name="category" required>
-                <option value="">Select Category</option>
-                <option value="General">General</option>
-                <option value="OBC">OBC</option>
-                <option value="SC">SC</option>
-                <option value="ST">ST</option>
-                <option value="EWS">EWS</option>
-            </select>
+            <div class="row">
+                <div class="field">
+                    <label for="income">Annual income <span class="hint">(₹)</span></label>
+                    <input type="number" id="income" name="income" placeholder="e.g. 250000" min="0" required>
+                </div>
+            </div>
 
-            <!-- Submit Button -->
-            <button type="submit">
-                Check Eligibility
-            </button>
+            <p class="section-label spaced">Scheme interest</p>
+
+            <div class="field">
+                <label for="schemeCategory">Scheme category</label>
+                <select id="schemeCategory" name="schemeCategory" required>
+    <option value="" disabled selected>Select a category</option>
+    <option value="Social welfare & Empowerment">Social welfare & Empowerment</option>
+    <option value="Education & Learning">Education & Learning</option>
+    <option value="Business & Entrepreneurship">Business & Entrepreneurship</option>
+    <option value="Agriculture">Agriculture</option>
+    <option value="Rural & Environment">Rural & Environment</option>
+    <option value="Women and Child">Women and Child</option>
+    <option value="Skills & Employment">Skills & Employment</option>
+    <option value="Banking">Banking</option>
+    <option value="Financial Services and Insurance">Financial Services and Insurance</option>
+    <option value="Health & Wellness">Health & Wellness</option>
+    <option value="Sports & Culture">Sports & Culture</option>
+    <option value="Housing & Shelter">Housing & Shelter</option>
+    <option value="Science">Science</option>
+    <option value="IT & Communications">IT & Communications</option>
+    <option value="Transport & Infrastructure">Transport & Infrastructure</option>
+    <option value="Utility & Sanitation">Utility & Sanitation</option>
+    <option value="Travel & Tourism">Travel & Tourism</option>
+    <option value="Public Safety">Public Safety</option>
+    <option value="Law & Justice">Law & Justice</option>
+</select>
+            </div>
+
+            <button type="submit">Check eligibility</button>
+            <p class="note">Your details are used only to match you with relevant schemes.</p>
 
         </form>
 
-        <!-- Results will appear here later -->
         <div id="results"></div>
 
     </div>
+
     <script>
-const form = document.getElementById("eligibilityForm");
-form.addEventListener("submit", function(event) {
-    event.preventDefault();
-    const ageValue = document.getElementById("age").value;
-const stateValue = document.getElementById("state").value;
-const cityvalue = document.getElementById("city").value;
-const incomevalue = document.getElementById("income").value;
-const occupationvalue = document.getElementById("occupation").value;
-const categoryvalue= document.getElementById("category").value;
-const formData = {
-    age: ageValue,
-    state: stateValue,
-    city:cityvalue,
-    income:incomevalue,
-    occupation:occupationvalue,
-    category:categoryvalue,
-    
+        // const form = document.getElementById("eligibilityForm");
 
-};
-console.log(formData);
-fetch("http://localhost:5000/api/check-eligibility", {  
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(formData)
-})
-.then(response => response.json())
-.then(function(result) {
-    const resultsDiv = document.getElementById("results");
-    resultsDiv.innerHTML = "";
+        // form.addEventListener("submit", function (event) {
+        //     event.preventDefault();
 
-    if (result.matches.length === 0) {
-        resultsDiv.innerHTML = "<p>No matching schemes found.</p>";
-    } else {
-        result.matches.forEach(function(scheme) {
-            resultsDiv.innerHTML += `
-                <div style="border:1px solid #ccc; padding:10px; margin-top:10px; border-radius:5px;">
-                    <h3>${scheme.name}</h3>
-                    <p>${scheme.benefit}</p>
-                </div>
-            `;
-        });
-    }
-});
-});
+        //     const formData = {
+        //         name: document.getElementById("name").value,
+        //         email: document.getElementById("email").value,
+        //         mobile: document.getElementById("mobile").value,
+        //         age: document.getElementById("age").value,
+        //         state: document.getElementById("state").value,
+        //         income: document.getElementById("income").value,
+        //         occupation: document.getElementById("occupation").value,
+        //         schemeCategory: document.getElementById("schemeCategory").value
+        //     };
 
-</script>
+        //     console.log(formData);
+
+        //     fetch("http://localhost:5000/api/check-eligibility", {
+        //         method: "POST",
+        //         headers: { "Content-Type": "application/json" },
+        //         body: JSON.stringify(formData)
+        //     })
+        //         .then(response => response.json())
+        //         .then(function (result) {
+        //             const resultsDiv = document.getElementById("results");
+        //             resultsDiv.innerHTML = "";
+
+        //             if (!result.matches || result.matches.length === 0) {
+        //                 resultsDiv.innerHTML = '<div class="empty-state">No matching schemes found for the details provided.</div>';
+        //             } else {
+        //                 result.matches.forEach(function (scheme) {
+        //                     resultsDiv.innerHTML += `
+        //                         <div class="scheme-card">
+        //                             <h3>${scheme.name}</h3>
+        //                             <p>${scheme.benefit}</p>
+        //                         </div>
+        //                     `;
+        //                 });
+        //             }
+        //         })
+        //         .catch(function () {
+        //             const resultsDiv = document.getElementById("results");
+        //             resultsDiv.innerHTML = '<div class="empty-state">Could not reach the eligibility service. Please try again.</div>';
+        //         });
+        // });
+    </script>
 
 </body>
-</html>
+</html> 
