@@ -2,6 +2,8 @@ from flask import Flask, jsonify, send_from_directory, request, render_template,
 from werkzeug.security import generate_password_hash, check_password_hash
 from functools import wraps
 import sqlite3
+import random
+import string
 import os
 
 try:
@@ -47,7 +49,7 @@ class Database:
 
     @staticmethod
     def init_tables():
-        """Ensure all required tables and default data exist in the database."""
+        """Ensure all required tables and default users exist in the database."""
         db_type, conn = Database.get_connection()
         cursor = conn.cursor()
 
@@ -91,13 +93,37 @@ class Database:
             )
             """)
 
-            # Seed demo user if missing
+            cursor.execute("""
+            CREATE TABLE IF NOT EXISTS applied_schemes (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id INTEGER,
+                user_email TEXT NOT NULL,
+                user_name TEXT,
+                scheme_name TEXT NOT NULL,
+                scheme_category TEXT,
+                reference_no TEXT UNIQUE,
+                status TEXT DEFAULT 'Under Review',
+                applied_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+            """)
+
+            # Seed demo citizen
             cursor.execute("SELECT id FROM users WHERE email = ?", ("demo@janmitra.gov.in",))
             if not cursor.fetchone():
                 cursor.execute("""
                 INSERT INTO users (name, email, password_hash, role)
                 VALUES (?, ?, ?, ?)
                 """, ("Demo Citizen", "demo@janmitra.gov.in", generate_password_hash("Password@123"), "citizen"))
+
+            # Seed admin user
+            cursor.execute("SELECT id FROM users WHERE email = ?", ("admin@janmitra.gov.in",))
+            if not cursor.fetchone():
+                cursor.execute("""
+                INSERT INTO users (name, email, password_hash, role)
+                VALUES (?, ?, ?, ?)
+                """, ("System Administrator", "admin@janmitra.gov.in", generate_password_hash("Admin@123"), "admin"))
+            else:
+                cursor.execute("UPDATE users SET role = 'admin' WHERE email = 'admin@janmitra.gov.in'")
 
             conn.commit()
             cursor.close()
@@ -128,6 +154,19 @@ class Database:
                     ea_created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                 )
                 """)
+                cursor.execute("""
+                CREATE TABLE IF NOT EXISTS applied_schemes (
+                    id INT AUTO_INCREMENT PRIMARY KEY,
+                    user_id INT,
+                    user_email VARCHAR(255) NOT NULL,
+                    user_name VARCHAR(255),
+                    scheme_name VARCHAR(255) NOT NULL,
+                    scheme_category VARCHAR(255),
+                    reference_no VARCHAR(100) UNIQUE,
+                    status VARCHAR(50) DEFAULT 'Under Review',
+                    applied_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                )
+                """)
                 conn.commit()
             except Exception as e:
                 print(f"MySQL init error: {e}")
@@ -142,7 +181,7 @@ except Exception as e:
     print(f"DB Init notice: {e}")
 
 
-# ---- Helper Functions ----
+# ---- Helper Functions & Decorators ----
 
 def login_required(f):
     @wraps(f)
@@ -152,6 +191,27 @@ def login_required(f):
             return redirect(f"/login?next={next_url}")
         return f(*args, **kwargs)
     return decorated_function
+
+
+def admin_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if "user_id" not in session:
+            if request.path.startswith("/api/"):
+                return jsonify({"success": False, "message": "Authentication required."}), 401
+            return redirect("/login?next=/admin")
+        if session.get("user_role") != "admin":
+            if request.path.startswith("/api/"):
+                return jsonify({"success": False, "message": "Admin authorization required."}), 403
+            return redirect("/dashboard")
+        return f(*args, **kwargs)
+    return decorated_function
+
+
+def generate_reference_no():
+    """Generates a human-friendly unique application reference number."""
+    digits = "".join(random.choices(string.digits, k=5))
+    return f"JM-2026-{digits}"
 
 
 def get_user_by_email(email):
@@ -201,7 +261,7 @@ def create_user(name, email, password, role="citizen"):
             conn.commit()
             user_id = cursor.lastrowid
             return user_id, None
-        except Exception as e:
+        except Exception:
             return None, "An account with this email already exists or database error occurred."
         finally:
             cursor.close()
@@ -339,7 +399,7 @@ def find_existing_application(email, mobile):
         return row
 
 
-# ---- Routes ----
+# ---- Core Routes ----
 
 @app.route("/")
 def home():
@@ -365,39 +425,18 @@ def login_page():
             session["user_name"] = user["name"]
             session["user_email"] = user["email"]
             session["user_role"] = user.get("role", "citizen")
-            next_url = request.args.get("next") or "/dashboard"
+
+            default_target = "/admin" if user.get("role") == "admin" else "/dashboard"
+            next_url = request.args.get("next") or default_target
             return redirect(next_url)
         else:
             return render_template("login.html", error="Invalid email or password.")
 
     if "user_id" in session:
+        if session.get("user_role") == "admin":
+            return redirect("/admin")
         return redirect("/dashboard")
     return render_template("login.html")
-
-
-@app.route("/register", methods=["POST"])
-def register():
-    name = request.form.get("name", "").strip()
-    email = request.form.get("email", "").strip()
-    password = request.form.get("password", "")
-    confirm_password = request.form.get("confirm_password", "")
-
-    if not name or not email or not password:
-        return render_template("login.html", error="All fields are required.")
-    if len(password) < 6:
-        return render_template("login.html", error="Password must be at least 6 characters.")
-    if password != confirm_password:
-        return render_template("login.html", error="Passwords do not match.")
-
-    user_id, err = create_user(name, email, password)
-    if err:
-        return render_template("login.html", error=err)
-
-    session["user_id"] = user_id
-    session["user_name"] = name
-    session["user_email"] = email
-    session["user_role"] = "citizen"
-    return redirect("/dashboard")
 
 
 @app.route("/logout")
@@ -406,7 +445,7 @@ def logout():
     return redirect("/login")
 
 
-# ---- Authentication API Endpoints (for AJAX / Fetch) ----
+# ---- Authentication API Endpoints ----
 
 @app.route("/api/auth/login", methods=["POST"])
 def api_login():
@@ -422,9 +461,12 @@ def api_login():
         session["user_name"] = user["name"]
         session["user_email"] = user["email"]
         session["user_role"] = user.get("role", "citizen")
+
+        target_redirect = "/admin" if user.get("role") == "admin" else "/dashboard"
         return jsonify({
             "success": True,
             "message": "Login successful",
+            "redirect": target_redirect,
             "user": {
                 "id": user["id"],
                 "name": user["name"],
@@ -433,36 +475,6 @@ def api_login():
             }
         })
     return jsonify({"success": False, "message": "Invalid email or password."}), 401
-
-
-@app.route("/api/auth/register", methods=["POST"])
-def api_register():
-    data = request.get_json(silent=True) or request.form
-    name = data.get("name", "").strip()
-    email = data.get("email", "").strip()
-    password = data.get("password", "")
-    confirm_password = data.get("confirm_password", "")
-
-    if not name or not email or not password:
-        return jsonify({"success": False, "message": "All fields are required."}), 400
-    if len(password) < 6:
-        return jsonify({"success": False, "message": "Password must be at least 6 characters."}), 400
-    if confirm_password and password != confirm_password:
-        return jsonify({"success": False, "message": "Passwords do not match."}), 400
-
-    user_id, err = create_user(name, email, password)
-    if err:
-        return jsonify({"success": False, "message": err}), 400
-
-    session["user_id"] = user_id
-    session["user_name"] = name
-    session["user_email"] = email
-    session["user_role"] = "citizen"
-    return jsonify({
-        "success": True,
-        "message": "Account created successfully",
-        "user": {"id": user_id, "name": name, "email": email, "role": "citizen"}
-    })
 
 
 @app.route("/api/auth/status")
@@ -480,7 +492,7 @@ def auth_status():
     return jsonify({"logged_in": False, "user": None})
 
 
-# ---- Scheme Eligibility & Submission Routes ----
+# ---- Scheme Eligibility & Application Submission ----
 
 @app.route("/api/check-eligibility", methods=["POST"])
 def api_check_eligibility():
@@ -495,9 +507,17 @@ def api_check_eligibility():
 
 @app.route('/submit', methods=['POST'])
 def submit():
+    """
+    Submits eligibility details and registers the citizen account.
+    """
     user = request.form
+    name = user.get("name", "").strip()
+    email = user.get("email", "").strip()
+    mobile = user.get("mobile", "").strip()
     selected_category = user.get("schemeCategory", "")
+    password = user.get("password", "").strip()
 
+    # 1. Fetch matching schemes from scheme_library
     db_type, conn = Database.get_connection()
     if db_type == "sqlite":
         cursor = conn.cursor()
@@ -539,25 +559,328 @@ def submit():
         cursor.close()
         conn.close()
 
-    email = user.get("email")
-    mobile = user.get("mobile")
-    if email and mobile:
+    # 2. Save application to eligibility_applications
+    if email:
         existing = find_existing_application(email, mobile)
         if not existing:
             insert_application(user)
+
+        # 3. Create or update User Account
+        existing_user = get_user_by_email(email)
+        if not existing_user:
+            reg_pwd = password if password else "Password@123"
+            user_id, _ = create_user(name, email, reg_pwd, role="citizen")
+        else:
+            user_id = existing_user["id"]
+            if password:
+                db_t, c = Database.get_connection()
+                if db_t == "sqlite":
+                    cur = c.cursor()
+                    cur.execute("UPDATE users SET password_hash = ? WHERE id = ?", (generate_password_hash(password), user_id))
+                    c.commit()
+                    cur.close()
+                else:
+                    cur = c.cursor()
+                    cur.execute("UPDATE users SET password_hash = %s WHERE id = %s", (generate_password_hash(password), user_id))
+                    c.commit()
+                    cur.close()
+                c.close()
+
+        # Log citizen into session
+        session["user_id"] = user_id
+        session["user_name"] = name
+        session["user_email"] = email
+        session["user_role"] = "citizen"
+
+    # Get user's already applied schemes if any
+    applied_names = set()
+    if "user_email" in session:
+        db_type, conn = Database.get_connection()
+        if db_type == "sqlite":
+            c = conn.cursor()
+            c.execute("SELECT scheme_name FROM applied_schemes WHERE user_email = ?", (session["user_email"],))
+            applied_names = {row["scheme_name"] for row in c.fetchall()}
+            c.close()
+            conn.close()
 
     return render_template(
         "result.html",
         error=None,
         category=selected_category,
-        schemes=schemes
+        schemes=schemes,
+        applied_names=applied_names
     )
 
+
+# ---- Scheme Application Endpoint (Apply for Multiple Schemes) ----
+
+@app.route("/api/apply-scheme", methods=["POST"])
+def api_apply_scheme():
+    """
+    Allows a citizen to apply for multiple schemes.
+    Stores the application with unique reference number.
+    """
+    if "user_id" not in session:
+        return jsonify({
+            "success": False,
+            "message": "Please log in to apply for government welfare schemes.",
+            "require_login": True
+        }), 401
+
+    data = request.get_json(silent=True) or request.form
+    scheme_name = data.get("scheme_name", "").strip()
+    scheme_category = data.get("scheme_category", "").strip()
+
+    if not scheme_name:
+        return jsonify({"success": False, "message": "Scheme name is required."}), 400
+
+    user_id = session.get("user_id")
+    user_email = session.get("user_email")
+    user_name = session.get("user_name", "Citizen")
+
+    db_type, conn = Database.get_connection()
+    ref_no = None
+
+    if db_type == "sqlite":
+        cursor = conn.cursor()
+        # Check if already applied
+        cursor.execute(
+            "SELECT id, reference_no, status, applied_at FROM applied_schemes WHERE user_email = ? AND scheme_name = ?",
+            (user_email, scheme_name)
+        )
+        existing = cursor.fetchone()
+        if existing:
+            ref_no = existing["reference_no"]
+            cursor.close()
+            conn.close()
+            return jsonify({
+                "success": True,
+                "already_applied": True,
+                "message": f"You have already applied for '{scheme_name}'.",
+                "reference_no": ref_no,
+                "status": existing["status"]
+            })
+
+        # Insert new scheme application
+        ref_no = generate_reference_no()
+        cursor.execute(
+            """
+            INSERT INTO applied_schemes (user_id, user_email, user_name, scheme_name, scheme_category, reference_no, status)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+            """,
+            (user_id, user_email, user_name, scheme_name, scheme_category, ref_no, "Under Review")
+        )
+        conn.commit()
+        cursor.close()
+        conn.close()
+    else:
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute(
+            "SELECT id, reference_no, status FROM applied_schemes WHERE user_email = %s AND scheme_name = %s",
+            (user_email, scheme_name)
+        )
+        existing = cursor.fetchone()
+        if existing:
+            ref_no = existing["reference_no"]
+            cursor.close()
+            conn.close()
+            return jsonify({
+                "success": True,
+                "already_applied": True,
+                "message": f"You have already applied for '{scheme_name}'.",
+                "reference_no": ref_no,
+                "status": existing["status"]
+            })
+
+        ref_no = generate_reference_no()
+        cursor.execute(
+            """
+            INSERT INTO applied_schemes (user_id, user_email, user_name, scheme_name, scheme_category, reference_no, status)
+            VALUES (%s, %s, %s, %s, %s, %s, %s)
+            """,
+            (user_id, user_email, user_name, scheme_name, scheme_category, ref_no, "Under Review")
+        )
+        conn.commit()
+        cursor.close()
+        conn.close()
+
+    return jsonify({
+        "success": True,
+        "already_applied": False,
+        "message": f"Successfully applied for '{scheme_name}'!",
+        "reference_no": ref_no,
+        "scheme_name": scheme_name,
+        "status": "Under Review"
+    })
+
+
+# ---- Dashboards ----
 
 @app.route("/dashboard")
 @login_required
 def dashboard():
+    """
+    Citizen Personal Dashboard:
+    Displays strictly the logged-in citizen's personal profile, their own submitted eligibility checks,
+    ALL schemes applied by this user, and recommended schemes.
+    """
+    user_email = session.get("user_email")
+    user_name = session.get("user_name", "Citizen")
+    user_role = session.get("user_role", "citizen")
+    user_id = session.get("user_id")
+
     db_type, conn = Database.get_connection()
+    applications = []
+    applied_schemes = []
+    matched_schemes = []
+    citizen_profile = {
+        "id": user_id,
+        "name": user_name,
+        "email": user_email,
+        "mobile": None,
+        "age": None,
+        "state": None,
+        "income": None,
+        "occupation": None,
+        "schemeCategory": None
+    }
+
+    if db_type == "sqlite":
+        cursor = conn.cursor()
+        
+        # 1. Fetch ONLY this citizen's eligibility checks
+        cursor.execute(
+            """
+            SELECT ea_id, ea_name, ea_email, ea_mobile, ea_age, ea_state, ea_income, ea_scheme_category, ea_created_at
+            FROM eligibility_applications
+            WHERE ea_email = ?
+            ORDER BY ea_created_at DESC
+            """,
+            (user_email,)
+        )
+        applications = [dict(r) for r in cursor.fetchall()]
+
+        # 2. Fetch ALL schemes applied by this user
+        cursor.execute(
+            """
+            SELECT id, scheme_name, scheme_category, reference_no, status, applied_at
+            FROM applied_schemes
+            WHERE user_email = ?
+            ORDER BY applied_at DESC
+            """,
+            (user_email,)
+        )
+        applied_schemes = [dict(r) for r in cursor.fetchall()]
+
+        # Populate profile details from latest eligibility submission
+        if applications:
+            latest = applications[0]
+            citizen_profile.update({
+                "name": latest.get("ea_name") or user_name,
+                "mobile": latest.get("ea_mobile"),
+                "age": latest.get("ea_age"),
+                "state": latest.get("ea_state"),
+                "income": latest.get("ea_income"),
+                "schemeCategory": latest.get("ea_scheme_category")
+            })
+
+            # Fetch top recommended schemes for citizen's category
+            cat = latest.get("ea_scheme_category")
+            if cat:
+                cursor.execute(
+                    """
+                    SELECT scheme_name, details, benefits, category AS scheme_category
+                    FROM scheme_library
+                    WHERE category LIKE ?
+                    LIMIT 6
+                    """,
+                    (f"%{cat}%",)
+                )
+                matched_schemes = [dict(r) for r in cursor.fetchall()]
+
+        cursor.close()
+        conn.close()
+    else:
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute(
+            """
+            SELECT ea_id, ea_name, ea_email, ea_mobile, ea_age, ea_state, ea_income, ea_scheme_category, ea_created_at
+            FROM eligibility_applications
+            WHERE ea_email = %s
+            ORDER BY ea_created_at DESC
+            """,
+            (user_email,)
+        )
+        applications = cursor.fetchall()
+
+        cursor.execute(
+            """
+            SELECT id, scheme_name, scheme_category, reference_no, status, applied_at
+            FROM applied_schemes
+            WHERE user_email = %s
+            ORDER BY applied_at DESC
+            """,
+            (user_email,)
+        )
+        applied_schemes = cursor.fetchall()
+
+        if applications:
+            latest = applications[0]
+            citizen_profile.update({
+                "name": latest.get("ea_name") or user_name,
+                "mobile": latest.get("ea_mobile"),
+                "age": latest.get("ea_age"),
+                "state": latest.get("ea_state"),
+                "income": latest.get("ea_income"),
+                "schemeCategory": latest.get("ea_scheme_category")
+            })
+            cat = latest.get("ea_scheme_category")
+            if cat:
+                cursor.execute(
+                    """
+                    SELECT scheme_name, details, benefits, scheme_category
+                    FROM scheme_library
+                    WHERE scheme_category LIKE %s
+                    LIMIT 6
+                    """,
+                    (f"%{cat}%",)
+                )
+                matched_schemes = cursor.fetchall()
+        cursor.close()
+        conn.close()
+
+    applied_scheme_names = {s["scheme_name"] for s in applied_schemes}
+
+    current_user_data = {
+        "id": user_id,
+        "name": user_name,
+        "email": user_email,
+        "role": user_role
+    }
+
+    return render_template(
+        "dashboard.html",
+        citizen_profile=citizen_profile,
+        applications=applications,
+        applied_schemes=applied_schemes,
+        applied_scheme_names=applied_scheme_names,
+        matched_schemes=matched_schemes,
+        current_user=current_user_data
+    )
+
+
+@app.route("/admin")
+@admin_required
+def admin_dashboard():
+    """
+    Dedicated Admin Portal Route:
+    Displays portal-wide database of ALL citizen submissions and scheme applications.
+    """
+    db_type, conn = Database.get_connection()
+    applications = []
+    all_applied_schemes = []
+    total_users = 0
+
     if db_type == "sqlite":
         cursor = conn.cursor()
         cursor.execute(
@@ -568,6 +891,19 @@ def dashboard():
             """
         )
         applications = [dict(r) for r in cursor.fetchall()]
+
+        cursor.execute(
+            """
+            SELECT id, user_name, user_email, scheme_name, scheme_category, reference_no, status, applied_at
+            FROM applied_schemes
+            ORDER BY applied_at DESC
+            """
+        )
+        all_applied_schemes = [dict(r) for r in cursor.fetchall()]
+
+        cursor.execute("SELECT COUNT(*) FROM users")
+        total_users = cursor.fetchone()[0]
+
         cursor.close()
         conn.close()
     else:
@@ -580,15 +916,109 @@ def dashboard():
             """
         )
         applications = cursor.fetchall()
+
+        cursor.execute(
+            """
+            SELECT id, user_name, user_email, scheme_name, scheme_category, reference_no, status, applied_at
+            FROM applied_schemes
+            ORDER BY applied_at DESC
+            """
+        )
+        all_applied_schemes = cursor.fetchall()
+
+        cursor.execute("SELECT COUNT(*) AS cnt FROM users")
+        row = cursor.fetchone()
+        total_users = row["cnt"] if row else 0
+
         cursor.close()
         conn.close()
 
-    user_info = {
-        "name": session.get("user_name", "Citizen"),
-        "email": session.get("user_email", ""),
-        "role": session.get("user_role", "citizen")
+    admin_user = {
+        "name": session.get("user_name", "System Administrator"),
+        "email": session.get("user_email", "admin@janmitra.gov.in"),
+        "role": "admin"
     }
-    return render_template("dashboard.html", applications=applications, current_user=user_info)
+
+    return render_template(
+        "admin_dashboard.html",
+        applications=applications,
+        all_applied_schemes=all_applied_schemes,
+        total_users=total_users,
+        current_user=admin_user
+    )
+
+
+@app.route("/api/admin/update-status", methods=["POST"])
+@admin_required
+def admin_update_status():
+    """
+    Allows administrator to update the status of any citizen's scheme application.
+    Supported statuses: 'Under Review', 'Approved', 'Rejected', 'Disbursed'
+    """
+    data = request.get_json(silent=True) or request.form
+    app_id = data.get("application_id") or data.get("id")
+    reference_no = data.get("reference_no")
+    new_status = data.get("status", "").strip()
+
+    valid_statuses = ["Under Review", "Approved", "Rejected", "Disbursed"]
+    if new_status not in valid_statuses:
+        return jsonify({
+            "success": False,
+            "message": f"Invalid status. Choose from: {', '.join(valid_statuses)}"
+        }), 400
+
+    if not app_id and not reference_no:
+        return jsonify({
+            "success": False,
+            "message": "Application ID or Reference Number is required."
+        }), 400
+
+    db_type, conn = Database.get_connection()
+    updated = False
+
+    if db_type == "sqlite":
+        cursor = conn.cursor()
+        if app_id:
+            cursor.execute(
+                "UPDATE applied_schemes SET status = ? WHERE id = ?",
+                (new_status, app_id)
+            )
+        else:
+            cursor.execute(
+                "UPDATE applied_schemes SET status = ? WHERE reference_no = ?",
+                (new_status, reference_no)
+            )
+        conn.commit()
+        updated = cursor.rowcount > 0
+        cursor.close()
+        conn.close()
+    else:
+        cursor = conn.cursor()
+        if app_id:
+            cursor.execute(
+                "UPDATE applied_schemes SET status = %s WHERE id = %s",
+                (new_status, app_id)
+            )
+        else:
+            cursor.execute(
+                "UPDATE applied_schemes SET status = %s WHERE reference_no = %s",
+                (new_status, reference_no)
+            )
+        conn.commit()
+        updated = cursor.rowcount > 0
+        cursor.close()
+        conn.close()
+
+    if not updated:
+        return jsonify({"success": False, "message": "Application record not found."}), 404
+
+    return jsonify({
+        "success": True,
+        "message": f"Status successfully updated to '{new_status}'.",
+        "status": new_status,
+        "application_id": app_id,
+        "reference_no": reference_no
+    })
 
 
 # ---- Interactive AI Chat Assistant Endpoint ----

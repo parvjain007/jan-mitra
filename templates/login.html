@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Login & Sign Up — JanMitra AI</title>
+<title>Citizen Login — JanMitra AI</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -60,7 +60,6 @@ body {
     radial-gradient(600px 500px at 90% 85%, rgba(16,185,129,0.10), transparent 70%),
     radial-gradient(500px 400px at 50% 50%, rgba(245,158,11,0.06), transparent 70%);
 }
-/* Navbar Minimal */
 .login-nav {
   padding: 20px 32px;
   display: flex;
@@ -126,7 +125,6 @@ body {
 }
 .back-home:hover { color: var(--primary); }
 
-/* Main Wrapper */
 .auth-wrapper {
   flex: 1;
   display: flex;
@@ -136,7 +134,7 @@ body {
 }
 .auth-card {
   width: 100%;
-  max-width: 480px;
+  max-width: 460px;
   background: var(--card);
   border: 1px solid var(--border);
   border-radius: var(--radius);
@@ -150,7 +148,7 @@ body {
 }
 .auth-header {
   text-align: center;
-  margin-bottom: 26px;
+  margin-bottom: 24px;
 }
 .auth-header h1 {
   font-family: var(--font-display);
@@ -164,39 +162,6 @@ body {
   font-size: 14px;
 }
 
-/* Tabs */
-.auth-tabs {
-  display: flex;
-  background: var(--bg);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 4px;
-  margin-bottom: 24px;
-}
-.tab-btn {
-  flex: 1;
-  padding: 10px 16px;
-  border: none;
-  background: none;
-  font-family: var(--font-display);
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--text-muted);
-  border-radius: 9px;
-  cursor: pointer;
-  transition: all .2s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-}
-.tab-btn.active {
-  background: var(--card);
-  color: var(--primary);
-  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-}
-
-/* Alert Boxes */
 .alert {
   padding: 12px 16px;
   border-radius: var(--radius-sm);
@@ -223,7 +188,6 @@ body {
   border: 1px solid rgba(37, 99, 235, 0.25);
 }
 
-/* Form Fields */
 .form-group {
   margin-bottom: 18px;
 }
@@ -281,29 +245,6 @@ body {
 }
 .password-toggle:hover { color: var(--text); }
 
-/* Password Strength Meter */
-.strength-meter {
-  margin-top: 6px;
-  display: none;
-}
-.strength-bars {
-  display: flex;
-  gap: 4px;
-  height: 4px;
-  margin-bottom: 4px;
-}
-.strength-bar {
-  flex: 1;
-  border-radius: 2px;
-  background: var(--border);
-  transition: background .3s ease;
-}
-.strength-text {
-  font-size: 11.5px;
-  color: var(--text-soft);
-}
-
-/* Options Row */
 .form-options {
   display: flex;
   justify-content: space-between;
@@ -326,11 +267,9 @@ body {
   color: var(--primary);
   text-decoration: none;
   font-weight: 600;
-  transition: text-decoration .2s;
 }
 .forgot-link:hover { text-decoration: underline; }
 
-/* Buttons */
 .btn-submit {
   width: 100%;
   padding: 13px;
@@ -355,11 +294,48 @@ body {
 }
 .btn-submit:active { transform: translateY(0); }
 
-/* Divider */
+/* Quick Demo Pills */
+.demo-box {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+.demo-pill {
+  background: color-mix(in srgb, var(--primary) 7%, var(--card));
+  border: 1px dashed var(--primary-light);
+  border-radius: var(--radius-sm);
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  transition: all .2s;
+}
+.demo-pill:hover {
+  background: color-mix(in srgb, var(--primary) 13%, var(--card));
+  border-color: var(--primary);
+}
+.demo-pill div { text-align: left; }
+.demo-pill strong { font-size: 12.5px; display: block; color: var(--primary); }
+.demo-pill span { font-size: 11px; color: var(--text-muted); }
+.demo-pill i { color: var(--primary); font-size: 13px; }
+
+.demo-pill.admin {
+  background: color-mix(in srgb, #8B5CF6 8%, var(--card));
+  border-color: #C4B5FD;
+}
+.demo-pill.admin:hover {
+  background: color-mix(in srgb, #8B5CF6 14%, var(--card));
+  border-color: #8B5CF6;
+}
+.demo-pill.admin strong { color: #7C3AED; }
+.demo-pill.admin i { color: #7C3AED; }
+
 .divider {
   display: flex;
   align-items: center;
-  margin: 22px 0;
+  margin: 22px 0 18px;
   color: var(--text-soft);
   font-size: 12.5px;
 }
@@ -371,74 +347,36 @@ body {
 }
 .divider span { padding: 0 12px; }
 
-/* Demo Quick Fill Button */
-.demo-pill {
-  width: 100%;
-  background: color-mix(in srgb, var(--primary) 8%, var(--card));
-  border: 1px dashed var(--primary-light);
+.register-callout {
+  background: color-mix(in srgb, var(--secondary) 10%, var(--card));
+  border: 1px solid color-mix(in srgb, var(--secondary) 30%, transparent);
   border-radius: var(--radius-sm);
-  padding: 11px 14px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  cursor: pointer;
-  margin-bottom: 18px;
-  transition: all .2s;
-}
-.demo-pill:hover {
-  background: color-mix(in srgb, var(--primary) 14%, var(--card));
-  border-color: var(--primary);
-}
-.demo-pill div { text-align: left; }
-.demo-pill strong { font-size: 13px; display: block; color: var(--primary); }
-.demo-pill span { font-size: 11.5px; color: var(--text-muted); }
-.demo-pill i { color: var(--primary); font-size: 14px; }
-
-/* Social Buttons */
-.social-buttons {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-}
-.btn-social {
-  padding: 10px 14px;
-  background: var(--bg);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--text);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  cursor: pointer;
-  transition: all .2s ease;
-}
-.btn-social:hover {
-  background: var(--card);
-  border-color: var(--primary-light);
-  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-}
-.digilocker-badge {
-  color: #1E3A8A;
-  font-weight: 800;
-  letter-spacing: -0.5px;
-}
-
-/* Footer note */
-.auth-footer {
+  padding: 14px 16px;
   text-align: center;
-  margin-top: 22px;
-  font-size: 13px;
-  color: var(--text-muted);
+  font-size: 13.5px;
+  line-height: 1.5;
 }
-.auth-footer a {
-  color: var(--primary);
-  font-weight: 600;
+.register-callout p {
+  color: var(--text);
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+.register-callout a {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--secondary);
+  color: #fff;
+  font-weight: 700;
   text-decoration: none;
+  padding: 8px 16px;
+  border-radius: 100px;
+  font-size: 13px;
+  transition: transform .2s ease;
 }
-.auth-footer a:hover { text-decoration: underline; }
+.register-callout a:hover {
+  transform: translateY(-1px);
+}
 </style>
 </head>
 <body>
@@ -464,18 +402,8 @@ body {
   <div class="auth-card">
 
     <div class="auth-header">
-      <h1 id="formHeading">Welcome to JanMitra</h1>
-      <p id="formSubheading">Access your personalized schemes, applications & benefits</p>
-    </div>
-
-    <!-- Mode Selector Tabs -->
-    <div class="auth-tabs">
-      <button class="tab-btn active" id="tabLogin" onclick="switchAuthTab('login')">
-        <i class="fa-solid fa-right-to-bracket"></i> Citizen Login
-      </button>
-      <button class="tab-btn" id="tabRegister" onclick="switchAuthTab('register')">
-        <i class="fa-solid fa-user-plus"></i> New Registration
-      </button>
+      <h1>Citizen Login</h1>
+      <p>Sign in to view your matched schemes & personal welfare tracker</p>
     </div>
 
     <!-- Alert Box for Server & Validation Messages -->
@@ -484,16 +412,25 @@ body {
       <span id="alertMessage"></span>
     </div>
 
-    <!-- Quick Demo Access Pill (Login tab only) -->
-    <div class="demo-pill" id="demoPill" onclick="fillDemoCredentials()" title="Click to autofill sample credentials">
-      <div>
-        <strong><i class="fa-solid fa-bolt"></i> Quick Demo Access</strong>
-        <span>demo@janmitra.gov.in / Password@123</span>
+    <!-- Quick Demo Access Pills -->
+    <div class="demo-box">
+      <div class="demo-pill" onclick="fillCredentials('demo@janmitra.gov.in', 'Password@123')" title="Click to fill Citizen demo credentials">
+        <div>
+          <strong><i class="fa-solid fa-user"></i> Citizen Demo</strong>
+          <span>demo@janmitra.gov.in / Password@123</span>
+        </div>
+        <i class="fa-solid fa-arrow-right"></i>
       </div>
-      <i class="fa-solid fa-arrow-right"></i>
+      <div class="demo-pill admin" onclick="fillCredentials('admin@janmitra.gov.in', 'Admin@123')" title="Click to fill Admin credentials">
+        <div>
+          <strong><i class="fa-solid fa-shield-halved"></i> Admin Portal Demo</strong>
+          <span>admin@janmitra.gov.in / Admin@123</span>
+        </div>
+        <i class="fa-solid fa-arrow-right"></i>
+      </div>
     </div>
 
-    <!-- LOGIN FORM -->
+    <!-- LOGIN FORM ONLY -->
     <form id="loginForm" onsubmit="handleLogin(event)" action="/login" method="POST">
       <div class="form-group">
         <label for="loginEmail">Email Address</label>
@@ -528,84 +465,16 @@ body {
       </button>
     </form>
 
-    <!-- REGISTRATION FORM -->
-    <form id="registerForm" onsubmit="handleRegister(event)" action="/register" method="POST" style="display:none;">
-      <div class="form-group">
-        <label for="regName">Full Name</label>
-        <div class="input-wrap">
-          <input type="text" id="regName" name="name" class="input-field" placeholder="Full name as per Aadhaar" required autocomplete="name">
-          <i class="fa-solid fa-user input-icon"></i>
-        </div>
-      </div>
-
-      <div class="form-group">
-        <label for="regEmail">Email Address</label>
-        <div class="input-wrap">
-          <input type="email" id="regEmail" name="email" class="input-field" placeholder="citizen@example.com" required autocomplete="email">
-          <i class="fa-solid fa-envelope input-icon"></i>
-        </div>
-      </div>
-
-      <div class="form-group">
-        <label for="regPassword">Create Password</label>
-        <div class="input-wrap">
-          <input type="password" id="regPassword" name="password" class="input-field" placeholder="Minimum 6 characters" required oninput="evaluatePasswordStrength(this.value)">
-          <i class="fa-solid fa-lock input-icon"></i>
-          <button type="button" class="password-toggle" onclick="togglePasswordVisibility('regPassword', this)">
-            <i class="fa-regular fa-eye"></i>
-          </button>
-        </div>
-        <div class="strength-meter" id="strengthMeter">
-          <div class="strength-bars">
-            <div class="strength-bar" id="strBar1"></div>
-            <div class="strength-bar" id="strBar2"></div>
-            <div class="strength-bar" id="strBar3"></div>
-          </div>
-          <span class="strength-text" id="strengthText">Password strength</span>
-        </div>
-      </div>
-
-      <div class="form-group">
-        <label for="regConfirmPassword">Confirm Password</label>
-        <div class="input-wrap">
-          <input type="password" id="regConfirmPassword" name="confirm_password" class="input-field" placeholder="Re-enter password" required>
-          <i class="fa-solid fa-shield-check input-icon"></i>
-          <button type="button" class="password-toggle" onclick="togglePasswordVisibility('regConfirmPassword', this)">
-            <i class="fa-regular fa-eye"></i>
-          </button>
-        </div>
-      </div>
-
-      <div class="form-options">
-        <label class="remember-me" style="font-size:12px;">
-          <input type="checkbox" id="regAgree" required checked>
-          <span>I agree to Citizen Privacy Policy & Terms</span>
-        </label>
-      </div>
-
-      <button type="submit" class="btn-submit" id="regSubmitBtn">
-        <span>Create Citizen Account</span>
-        <i class="fa-solid fa-user-check"></i>
-      </button>
-    </form>
-
-    <!-- Social / Official Logins -->
     <div class="divider">
-      <span>or continue with</span>
+      <span>New to JanMitra?</span>
     </div>
 
-    <div class="social-buttons">
-      <button type="button" class="btn-social" onclick="simulateOAuth('DigiLocker')">
-        <span class="digilocker-badge"><i class="fa-solid fa-shield-halved"></i> DigiLocker</span>
-      </button>
-      <button type="button" class="btn-social" onclick="simulateOAuth('Google')">
-        <i class="fa-brands fa-google" style="color:#EA4335;"></i> Google
-      </button>
-    </div>
-
-    <div class="auth-footer">
-      <span id="footerPrompt">Need assistance finding benefits?</span>
-      <a href="/check-eligibility" style="margin-left:4px;">Check Eligibility without login</a>
+    <!-- Registration Callout via Check Eligibility -->
+    <div class="register-callout">
+      <p>Register by checking your scheme eligibility!</p>
+      <a href="/check-eligibility">
+        <i class="fa-solid fa-clipboard-check"></i> Check Eligibility & Register
+      </a>
     </div>
 
   </div>
@@ -632,25 +501,6 @@ function updateThemeIcon(theme) {
   themeToggle.innerHTML = theme === 'dark' ? '<i class="fa-solid fa-sun"></i>' : '<i class="fa-solid fa-moon"></i>';
 }
 
-// Tab Switching
-function switchAuthTab(mode) {
-  const isLogin = mode === 'login';
-  document.getElementById('tabLogin').classList.toggle('active', isLogin);
-  document.getElementById('tabRegister').classList.toggle('active', !isLogin);
-
-  document.getElementById('loginForm').style.display = isLogin ? 'block' : 'none';
-  document.getElementById('registerForm').style.display = isLogin ? 'none' : 'block';
-  document.getElementById('demoPill').style.display = isLogin ? 'flex' : 'none';
-
-  document.getElementById('formHeading').textContent = isLogin ? 'Welcome to JanMitra' : 'Create Citizen Account';
-  document.getElementById('formSubheading').textContent = isLogin 
-    ? 'Access your personalized schemes, applications & benefits' 
-    : 'Join over 50,000+ citizens discovering their government welfare benefits';
-
-  hideAlert();
-}
-
-// Toggle password visibility
 function togglePasswordVisibility(inputId, btn) {
   const input = document.getElementById(inputId);
   const isPassword = input.type === 'password';
@@ -658,54 +508,12 @@ function togglePasswordVisibility(inputId, btn) {
   btn.innerHTML = isPassword ? '<i class="fa-regular fa-eye-slash"></i>' : '<i class="fa-regular fa-eye"></i>';
 }
 
-// Fill Demo Credentials
-function fillDemoCredentials() {
-  document.getElementById('loginEmail').value = 'demo@janmitra.gov.in';
-  document.getElementById('loginPassword').value = 'Password@123';
-  showAlert('Demo credentials filled! Click Log In or press Enter to continue.', 'info');
+function fillCredentials(email, pwd) {
+  document.getElementById('loginEmail').value = email;
+  document.getElementById('loginPassword').value = pwd;
+  showAlert(`Credentials filled for ${email}. Click Log In to continue.`, 'info');
 }
 
-// Password Strength
-function evaluatePasswordStrength(pwd) {
-  const meter = document.getElementById('strengthMeter');
-  if (!pwd) {
-    meter.style.display = 'none';
-    return;
-  }
-  meter.style.display = 'block';
-  const b1 = document.getElementById('strBar1');
-  const b2 = document.getElementById('strBar2');
-  const b3 = document.getElementById('strBar3');
-  const txt = document.getElementById('strengthText');
-
-  let score = 0;
-  if (pwd.length >= 6) score++;
-  if (/[A-Z]/.test(pwd) && /[0-9]/.test(pwd)) score++;
-  if (/[^A-Za-z0-9]/.test(pwd) && pwd.length >= 8) score++;
-
-  b1.style.background = '#E2E8F0';
-  b2.style.background = '#E2E8F0';
-  b3.style.background = '#E2E8F0';
-
-  if (score === 1) {
-    b1.style.background = '#EF4444';
-    txt.textContent = 'Weak password (try adding letters & numbers)';
-    txt.style.color = '#EF4444';
-  } else if (score === 2) {
-    b1.style.background = '#F59E0B';
-    b2.style.background = '#F59E0B';
-    txt.textContent = 'Medium password (add a special character e.g. @, #)';
-    txt.style.color = '#F59E0B';
-  } else {
-    b1.style.background = '#10B981';
-    b2.style.background = '#10B981';
-    b3.style.background = '#10B981';
-    txt.textContent = 'Strong password';
-    txt.style.color = '#10B981';
-  }
-}
-
-// Alerts
 function showAlert(msg, type = 'danger') {
   const alert = document.getElementById('authAlert');
   const text = document.getElementById('alertMessage');
@@ -719,7 +527,6 @@ function hideAlert() {
   document.getElementById('authAlert').style.display = 'none';
 }
 
-// Handle Login Submission
 async function handleLogin(e) {
   e.preventDefault();
   hideAlert();
@@ -747,86 +554,28 @@ async function handleLogin(e) {
     if (res.ok && data.success) {
       showAlert('Login successful! Redirecting...', 'success');
       setTimeout(() => {
-        const nextUrl = new URLSearchParams(window.location.search).get('next') || '/dashboard';
+        const nextUrl = new URLSearchParams(window.location.search).get('next') || data.redirect || '/dashboard';
         window.location.href = nextUrl;
-      }, 700);
+      }, 600);
     } else {
       showAlert(data.message || 'Invalid email or password.');
       btn.innerHTML = originalHTML;
       btn.disabled = false;
     }
   } catch (err) {
-    showAlert('Unable to connect to authentication server. Falling back to direct submit...');
+    showAlert('Connecting to server...');
     document.getElementById('loginForm').submit();
   }
 }
 
-// Handle Register Submission
-async function handleRegister(e) {
-  e.preventDefault();
-  hideAlert();
-  const name = document.getElementById('regName').value.trim();
-  const email = document.getElementById('regEmail').value.trim();
-  const password = document.getElementById('regPassword').value;
-  const confirmPassword = document.getElementById('regConfirmPassword').value;
-
-  if (!name || !email || !password) {
-    showAlert('Please fill in all required fields.');
-    return;
-  }
-  if (password.length < 6) {
-    showAlert('Password must be at least 6 characters long.');
-    return;
-  }
-  if (password !== confirmPassword) {
-    showAlert('Passwords do not match. Please re-enter.');
-    return;
-  }
-
-  const btn = document.getElementById('regSubmitBtn');
-  const originalHTML = btn.innerHTML;
-  btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Creating account...';
-  btn.disabled = true;
-
-  try {
-    const res = await fetch('/api/auth/register', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, email, password, confirm_password: confirmPassword })
-    });
-    const data = await res.json();
-    if (res.ok && data.success) {
-      showAlert('Account created successfully! Welcome to JanMitra.', 'success');
-      setTimeout(() => {
-        window.location.href = '/dashboard';
-      }, 900);
-    } else {
-      showAlert(data.message || 'Registration failed. Please try again.');
-      btn.innerHTML = originalHTML;
-      btn.disabled = false;
-    }
-  } catch (err) {
-    showAlert('Unable to reach server. Falling back to direct submit...');
-    document.getElementById('registerForm').submit();
-  }
-}
-
 function handleForgotPassword() {
-  const email = prompt('Enter your registered email address to receive password reset instructions:', document.getElementById('loginEmail').value);
+  const email = prompt('Enter your registered email address:', document.getElementById('loginEmail').value);
   if (email) {
     showAlert(`Password reset instructions have been sent to ${email} (Demo mode).`, 'info');
   }
 }
 
-function simulateOAuth(provider) {
-  showAlert(`Connecting with ${provider}... In this demo environment, please use citizen login or quick demo access above.`, 'info');
-}
-
-// Check URL query parameters (e.g. ?mode=register or ?error=...)
 const urlParams = new URLSearchParams(window.location.search);
-if (urlParams.get('mode') === 'register') {
-  switchAuthTab('register');
-}
 if (urlParams.get('error')) {
   showAlert(decodeURIComponent(urlParams.get('error')));
 }

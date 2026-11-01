@@ -388,7 +388,7 @@ footer{border-top:1px solid var(--border);padding:72px 0 32px;}
       <div id="navAuthArea" style="display:inline-flex;align-items:center;gap:12px;">
         <a href="/login" class="btn-ghost" id="navLoginBtn">Login</a>
       </div>
-      <a href="/check-eligibility" class="btn btn-primary btn-ripple">Check Eligibility</a>
+      <a href="/check-eligibility" class="btn btn-primary btn-ripple" id="navCheckEligibilityBtn">Check Eligibility</a>
       <button class="mobile-toggle"><i class="fa-solid fa-bars"></i></button>
     </div>
   </div>
@@ -611,7 +611,7 @@ footer{border-top:1px solid var(--border);padding:72px 0 32px;}
       <h2>Start Discovering Government Benefits Today</h2>
       <p>Let AI help you find the schemes you deserve.</p>
       <div class="hero-ctas" style="justify-content:center;">
-        <a href="/check-eligibility" class="btn btn-primary btn-ripple">Check Eligibility</a>
+        <a href="/check-eligibility" class="btn btn-primary btn-ripple" id="navCheckEligibilityBtn">Check Eligibility</a>
         <a href="#ai-showcase" class="btn btn-secondary btn-ripple">Talk to AI</a>
       </div>
     </div>
@@ -679,8 +679,10 @@ async function checkNavbarAuth() {
     const res = await fetch('/api/auth/status');
     const data = await res.json();
     const navAuth = document.getElementById('navAuthArea');
+    const navCheckBtn = document.getElementById('navCheckEligibilityBtn');
     if (!navAuth) return;
     if (data.logged_in && data.user) {
+      if (navCheckBtn) navCheckBtn.style.display = 'none';
       navAuth.innerHTML = `
         <a href="/dashboard" class="btn-ghost" style="display:inline-flex;align-items:center;gap:6px;font-weight:700;color:var(--primary);">
           <i class="fa-solid fa-circle-user" style="font-size:18px;"></i> ${data.user.name.split(' ')[0]}
@@ -690,6 +692,7 @@ async function checkNavbarAuth() {
         </a>
       `;
     } else {
+      if (navCheckBtn) navCheckBtn.style.display = '';
       navAuth.innerHTML = `<a href="/login" class="btn-ghost" id="navLoginBtn">Login</a>`;
     }
   } catch(e) {}

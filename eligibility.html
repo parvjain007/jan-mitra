@@ -362,8 +362,15 @@
 </select>
             </div>
 
-            <button type="submit">Check eligibility</button>
-            <p class="note">Your details are used only to match you with relevant schemes.</p>
+            <p class="section-label spaced" id="accountSecLabel">Account Registration & Login</p>
+
+            <div class="field" id="passwordFieldGroup">
+                <label for="password">Create Account Password <span class="hint">(Used to log in & access your dashboard anytime)</span></label>
+                <input type="password" id="password" name="password" placeholder="Create a password (minimum 6 characters)" minlength="6" required>
+            </div>
+
+            <button type="submit">Check eligibility & Register</button>
+            <p class="note">Your details will be used to match schemes and create your citizen profile.</p>
 
         </form>
 
@@ -432,11 +439,22 @@
                     if (nameInput && !nameInput.value) nameInput.value = data.user.name;
                     if (emailInput && !emailInput.value) emailInput.value = data.user.email;
                     
+                    // If already logged in, make password optional
+                    const pwdField = document.getElementById('password');
+                    const secLabel = document.getElementById('accountSecLabel');
+                    if (pwdField) {
+                        pwdField.removeAttribute('required');
+                        pwdField.placeholder = "Leave blank to keep existing password";
+                    }
+                    if (secLabel) {
+                        secLabel.innerHTML = 'Account Details <span style="font-size:12px;color:var(--teal);font-weight:normal;">(Logged in as ' + data.user.email + ')</span>';
+                    }
+
                     const authArea = document.getElementById('eligAuthArea');
                     if (authArea) {
                         authArea.innerHTML = `
                             <span style="font-size:13px;color:var(--teal);font-weight:600;">Welcome, ${data.user.name.split(' ')[0]}</span>
-                            <a href="/dashboard" style="text-decoration:none;color:var(--teal);font-weight:600;font-size:13px;padding:6px 12px;background:var(--marigold-soft);border-radius:4px;">Dashboard</a>
+                            <a href="/dashboard" style="text-decoration:none;color:var(--teal);font-weight:600;font-size:13px;padding:6px 12px;background:var(--marigold-soft);border-radius:4px;">My Dashboard</a>
                         `;
                     }
                 }

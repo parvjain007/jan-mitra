@@ -5,6 +5,7 @@ import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -12,54 +13,57 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * JanMitra AI - Java GUI Login & Registration Application
- * A full working graphical authentication interface built with Java Swing.
+ * JanMitra AI - Java GUI Citizen Login Application
+ * Focused authentication interface: Citizen Login with personal dashboard display.
+ * Registration is routed to the official Check Eligibility form.
  */
 public class JanMitraLoginApp extends JFrame {
 
-    // In-memory user database (with default demo user)
+    // User Accounts Database
     private static final Map<String, UserAccount> userDatabase = new HashMap<>();
 
     static {
-        // Pre-populate with demo citizen
+        // Pre-populate with demo citizen and admin
         userDatabase.put("demo@janmitra.gov.in", new UserAccount(
             "Demo Citizen",
             "demo@janmitra.gov.in",
             hashPassword("Password@123"),
-            "citizen"
+            "citizen",
+            "Rajasthan",
+            150000,
+            "Education & Learning"
+        ));
+
+        userDatabase.put("admin@janmitra.gov.in", new UserAccount(
+            "System Administrator",
+            "admin@janmitra.gov.in",
+            hashPassword("Admin@123"),
+            "admin",
+            "National HQ",
+            0,
+            "Admin Management"
         ));
     }
 
     private JTextField loginEmailField;
     private JPasswordField loginPasswordField;
-    private JTextField regNameField;
-    private JTextField regEmailField;
-    private JPasswordField regPasswordField;
-    private JPasswordField regConfirmPasswordField;
-    private JTabbedPane tabbedPane;
 
     public JanMitraLoginApp() {
-        setTitle("JanMitra AI — Citizen Portal Authentication");
-        setSize(520, 640);
+        setTitle("JanMitra AI — Citizen Portal Login");
+        setSize(480, 580);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setResizable(false);
 
-        // Main background panel
         JPanel mainPanel = new JPanel(new BorderLayout());
         mainPanel.setBackground(new Color(248, 250, 252));
         setContentPane(mainPanel);
 
-        // Header Panel
-        JPanel headerPanel = createHeaderPanel();
-        mainPanel.add(headerPanel, BorderLayout.NORTH);
+        // Header
+        mainPanel.add(createHeaderPanel(), BorderLayout.NORTH);
 
-        // Tabs (Login / Register)
-        tabbedPane = new JTabbedPane();
-        tabbedPane.setFont(new Font("Segoe UI", Font.BOLD, 14));
-        tabbedPane.addTab("Citizen Login", createLoginPanel());
-        tabbedPane.addTab("New Registration", createRegisterPanel());
-        mainPanel.add(tabbedPane, BorderLayout.CENTER);
+        // Center Login Panel
+        mainPanel.add(createLoginPanel(), BorderLayout.CENTER);
 
         // Footer
         JLabel footerLabel = new JLabel("© 2026 JanMitra AI — AI Citizen Welfare Portal", SwingConstants.CENTER);
@@ -73,20 +77,20 @@ public class JanMitraLoginApp extends JFrame {
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
         panel.setBackground(new Color(37, 99, 235));
-        panel.setBorder(new EmptyBorder(24, 20, 24, 20));
+        panel.setBorder(new EmptyBorder(22, 20, 22, 20));
 
         JLabel titleLabel = new JLabel("✦ JanMitra AI");
-        titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 24));
+        titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 22));
         titleLabel.setForeground(Color.WHITE);
         titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        JLabel subtitleLabel = new JLabel("Government Schemes & Citizen Welfare Portal");
+        JLabel subtitleLabel = new JLabel("Citizen Welfare & Scheme Matching Portal");
         subtitleLabel.setFont(new Font("Segoe UI", Font.PLAIN, 13));
         subtitleLabel.setForeground(new Color(219, 234, 254));
         subtitleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         panel.add(titleLabel);
-        panel.add(Box.createVerticalStrut(6));
+        panel.add(Box.createVerticalStrut(4));
         panel.add(subtitleLabel);
         return panel;
     }
@@ -97,19 +101,33 @@ public class JanMitraLoginApp extends JFrame {
         panel.setBackground(Color.WHITE);
         panel.setBorder(new EmptyBorder(24, 32, 24, 32));
 
-        // Quick Demo Fill Button
-        JButton demoBtn = new JButton("⚡ Autofill Demo: demo@janmitra.gov.in");
-        demoBtn.setFont(new Font("Segoe UI", Font.BOLD, 12));
-        demoBtn.setBackground(new Color(239, 246, 255));
-        demoBtn.setForeground(new Color(29, 78, 216));
-        demoBtn.setFocusPainted(false);
-        demoBtn.setAlignmentX(Component.LEFT_ALIGNMENT);
-        demoBtn.setMaximumSize(new Dimension(Integer.MAX_VALUE, 36));
-        demoBtn.addActionListener(e -> {
+        // Quick Demo Fill Buttons
+        JPanel demoBox = new JPanel(new GridLayout(2, 1, 6, 6));
+        demoBox.setBackground(Color.WHITE);
+        demoBox.setMaximumSize(new Dimension(Integer.MAX_VALUE, 76));
+        demoBox.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        JButton demoCitizenBtn = new JButton("⚡ Citizen Demo: demo@janmitra.gov.in");
+        demoCitizenBtn.setFont(new Font("Segoe UI", Font.BOLD, 11));
+        demoCitizenBtn.setBackground(new Color(239, 246, 255));
+        demoCitizenBtn.setForeground(new Color(29, 78, 216));
+        demoCitizenBtn.addActionListener(e -> {
             loginEmailField.setText("demo@janmitra.gov.in");
             loginPasswordField.setText("Password@123");
         });
-        panel.add(demoBtn);
+
+        JButton demoAdminBtn = new JButton("🛡️ Admin Demo: admin@janmitra.gov.in");
+        demoAdminBtn.setFont(new Font("Segoe UI", Font.BOLD, 11));
+        demoAdminBtn.setBackground(new Color(245, 243, 255));
+        demoAdminBtn.setForeground(new Color(124, 58, 237));
+        demoAdminBtn.addActionListener(e -> {
+            loginEmailField.setText("admin@janmitra.gov.in");
+            loginPasswordField.setText("Admin@123");
+        });
+
+        demoBox.add(demoCitizenBtn);
+        demoBox.add(demoAdminBtn);
+        panel.add(demoBox);
         panel.add(Box.createVerticalStrut(18));
 
         // Email field
@@ -124,7 +142,7 @@ public class JanMitraLoginApp extends JFrame {
         loginEmailField.setMaximumSize(new Dimension(Integer.MAX_VALUE, 38));
         loginEmailField.setAlignmentX(Component.LEFT_ALIGNMENT);
         panel.add(loginEmailField);
-        panel.add(Box.createVerticalStrut(16));
+        panel.add(Box.createVerticalStrut(14));
 
         // Password field
         JLabel passLabel = new JLabel("Password:");
@@ -138,117 +156,66 @@ public class JanMitraLoginApp extends JFrame {
         loginPasswordField.setMaximumSize(new Dimension(Integer.MAX_VALUE, 38));
         loginPasswordField.setAlignmentX(Component.LEFT_ALIGNMENT);
         panel.add(loginPasswordField);
-        panel.add(Box.createVerticalStrut(10));
+        panel.add(Box.createVerticalStrut(8));
 
-        // Show/hide password
+        // Show password checkbox
         JCheckBox showPassCheck = new JCheckBox("Show Password");
         showPassCheck.setFont(new Font("Segoe UI", Font.PLAIN, 12));
         showPassCheck.setBackground(Color.WHITE);
         showPassCheck.setAlignmentX(Component.LEFT_ALIGNMENT);
         showPassCheck.addActionListener(e -> {
-            if (showPassCheck.isSelected()) {
-                loginPasswordField.setEchoChar((char) 0);
-            } else {
-                loginPasswordField.setEchoChar('•');
-            }
+            loginPasswordField.setEchoChar(showPassCheck.isSelected() ? (char) 0 : '•');
         });
         panel.add(showPassCheck);
-        panel.add(Box.createVerticalStrut(24));
+        panel.add(Box.createVerticalStrut(20));
 
         // Login Button
         JButton loginBtn = new JButton("Log In to JanMitra");
-        loginBtn.setFont(new Font("Segoe UI", Font.BOLD, 15));
+        loginBtn.setFont(new Font("Segoe UI", Font.BOLD, 14));
         loginBtn.setBackground(new Color(37, 99, 235));
         loginBtn.setForeground(Color.WHITE);
         loginBtn.setFocusPainted(false);
         loginBtn.setAlignmentX(Component.LEFT_ALIGNMENT);
-        loginBtn.setMaximumSize(new Dimension(Integer.MAX_VALUE, 44));
+        loginBtn.setMaximumSize(new Dimension(Integer.MAX_VALUE, 42));
         loginBtn.setCursor(new Cursor(Cursor.HAND_CURSOR));
         loginBtn.addActionListener(e -> handleLogin());
         panel.add(loginBtn);
-
-        return panel;
-    }
-
-    private JPanel createRegisterPanel() {
-        JPanel panel = new JPanel();
-        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-        panel.setBackground(Color.WHITE);
-        panel.setBorder(new EmptyBorder(20, 32, 20, 32));
-
-        // Name
-        JLabel nameLabel = new JLabel("Full Name (as per ID):");
-        nameLabel.setFont(new Font("Segoe UI", Font.BOLD, 13));
-        nameLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
-        panel.add(nameLabel);
-        panel.add(Box.createVerticalStrut(5));
-
-        regNameField = new JTextField();
-        regNameField.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        regNameField.setMaximumSize(new Dimension(Integer.MAX_VALUE, 36));
-        regNameField.setAlignmentX(Component.LEFT_ALIGNMENT);
-        panel.add(regNameField);
-        panel.add(Box.createVerticalStrut(12));
-
-        // Email
-        JLabel emailLabel = new JLabel("Email Address:");
-        emailLabel.setFont(new Font("Segoe UI", Font.BOLD, 13));
-        emailLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
-        panel.add(emailLabel);
-        panel.add(Box.createVerticalStrut(5));
-
-        regEmailField = new JTextField();
-        regEmailField.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        regEmailField.setMaximumSize(new Dimension(Integer.MAX_VALUE, 36));
-        regEmailField.setAlignmentX(Component.LEFT_ALIGNMENT);
-        panel.add(regEmailField);
-        panel.add(Box.createVerticalStrut(12));
-
-        // Password
-        JLabel passLabel = new JLabel("Password (min 6 characters):");
-        passLabel.setFont(new Font("Segoe UI", Font.BOLD, 13));
-        passLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
-        panel.add(passLabel);
-        panel.add(Box.createVerticalStrut(5));
-
-        regPasswordField = new JPasswordField();
-        regPasswordField.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        regPasswordField.setMaximumSize(new Dimension(Integer.MAX_VALUE, 36));
-        regPasswordField.setAlignmentX(Component.LEFT_ALIGNMENT);
-        panel.add(regPasswordField);
-        panel.add(Box.createVerticalStrut(12));
-
-        // Confirm Password
-        JLabel confirmLabel = new JLabel("Confirm Password:");
-        confirmLabel.setFont(new Font("Segoe UI", Font.BOLD, 13));
-        confirmLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
-        panel.add(confirmLabel);
-        panel.add(Box.createVerticalStrut(5));
-
-        regConfirmPasswordField = new JPasswordField();
-        regConfirmPasswordField.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        regConfirmPasswordField.setMaximumSize(new Dimension(Integer.MAX_VALUE, 36));
-        regConfirmPasswordField.setAlignmentX(Component.LEFT_ALIGNMENT);
-        panel.add(regConfirmPasswordField);
         panel.add(Box.createVerticalStrut(20));
 
-        // Register Button
-        JButton regBtn = new JButton("Create Citizen Account");
-        regBtn.setFont(new Font("Segoe UI", Font.BOLD, 15));
-        regBtn.setBackground(new Color(16, 185, 129));
-        regBtn.setForeground(Color.WHITE);
-        regBtn.setFocusPainted(false);
-        regBtn.setAlignmentX(Component.LEFT_ALIGNMENT);
-        regBtn.setMaximumSize(new Dimension(Integer.MAX_VALUE, 44));
-        regBtn.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        regBtn.addActionListener(e -> handleRegister());
-        panel.add(regBtn);
+        // Registration Callout
+        JPanel regBox = new JPanel();
+        regBox.setLayout(new BoxLayout(regBox, BoxLayout.Y_AXIS));
+        regBox.setBackground(new Color(240, 253, 244));
+        regBox.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(new Color(187, 247, 208)),
+            new EmptyBorder(12, 12, 12, 12)
+        ));
+        regBox.setAlignmentX(Component.LEFT_ALIGNMENT);
+        regBox.setMaximumSize(new Dimension(Integer.MAX_VALUE, 80));
+
+        JLabel regMsg = new JLabel("New Citizen? Register via Check Eligibility");
+        regMsg.setFont(new Font("Segoe UI", Font.BOLD, 12));
+        regMsg.setForeground(new Color(22, 101, 52));
+        regMsg.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        JButton openCheckBtn = new JButton("Open Eligibility Form & Register →");
+        openCheckBtn.setFont(new Font("Segoe UI", Font.BOLD, 12));
+        openCheckBtn.setBackground(new Color(16, 185, 129));
+        openCheckBtn.setForeground(Color.WHITE);
+        openCheckBtn.setFocusPainted(false);
+        openCheckBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
+        openCheckBtn.addActionListener(e -> openWebEligibility());
+
+        regBox.add(regMsg);
+        regBox.add(Box.createVerticalStrut(6));
+        regBox.add(openCheckBtn);
+        panel.add(regBox);
 
         return panel;
     }
 
     private void handleLogin() {
-        String email = loginEmailField.getText().trim();
+        String email = loginEmailField.getText().trim().toLowerCase();
         String password = new String(loginPasswordField.getPassword());
 
         if (email.isEmpty() || password.isEmpty()) {
@@ -256,82 +223,91 @@ public class JanMitraLoginApp extends JFrame {
             return;
         }
 
-        UserAccount user = userDatabase.get(email.toLowerCase());
+        UserAccount user = userDatabase.get(email);
         if (user != null && user.passwordHash.equals(hashPassword(password))) {
-            JOptionPane.showMessageDialog(this, "Login successful!\nWelcome back, " + user.name + "!", "Authentication Successful", JOptionPane.INFORMATION_MESSAGE);
-            openDashboardWindow(user);
+            if ("admin".equals(user.role)) {
+                JOptionPane.showMessageDialog(this, "Admin Login Verified!\nOpening Portal Admin Control Center...", "Admin Access", JOptionPane.INFORMATION_MESSAGE);
+                openAdminWindow(user);
+            } else {
+                JOptionPane.showMessageDialog(this, "Login Successful!\nWelcome back, " + user.name + "!", "Authentication Successful", JOptionPane.INFORMATION_MESSAGE);
+                openCitizenDashboardWindow(user);
+            }
         } else {
-            JOptionPane.showMessageDialog(this, "Invalid email or password. Please try again.", "Authentication Failed", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Invalid email or password.\nIf you are a new citizen, please register by checking scheme eligibility.", "Authentication Failed", JOptionPane.ERROR_MESSAGE);
         }
     }
 
-    private void handleRegister() {
-        String name = regNameField.getText().trim();
-        String email = regEmailField.getText().trim().toLowerCase();
-        String password = new String(regPasswordField.getPassword());
-        String confirm = new String(regConfirmPasswordField.getPassword());
-
-        if (name.isEmpty() || email.isEmpty() || password.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "All fields are required.", "Missing Fields", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-        if (!email.contains("@") || !email.contains(".")) {
-            JOptionPane.showMessageDialog(this, "Please enter a valid email address.", "Invalid Email", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-        if (password.length() < 6) {
-            JOptionPane.showMessageDialog(this, "Password must be at least 6 characters.", "Weak Password", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-        if (!password.equals(confirm)) {
-            JOptionPane.showMessageDialog(this, "Passwords do not match.", "Password Mismatch", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-        if (userDatabase.containsKey(email)) {
-            JOptionPane.showMessageDialog(this, "An account with this email already exists. Please log in.", "Duplicate Account", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-
-        UserAccount newUser = new UserAccount(name, email, hashPassword(password), "citizen");
-        userDatabase.put(email, newUser);
-
-        JOptionPane.showMessageDialog(this, "Account created successfully!\nYou can now log in with your credentials.", "Registration Success", JOptionPane.INFORMATION_MESSAGE);
-        loginEmailField.setText(email);
-        loginPasswordField.setText(password);
-        tabbedPane.setSelectedIndex(0);
-    }
-
-    private void openDashboardWindow(UserAccount user) {
+    private void openCitizenDashboardWindow(UserAccount user) {
         JFrame dash = new JFrame("JanMitra AI — Citizen Dashboard");
-        dash.setSize(600, 480);
+        dash.setSize(620, 520);
         dash.setLocationRelativeTo(this);
 
         JPanel p = new JPanel(new BorderLayout(16, 16));
         p.setBorder(new EmptyBorder(24, 24, 24, 24));
         p.setBackground(new Color(248, 250, 252));
 
-        JLabel welcome = new JLabel("<html><h2>Welcome, " + user.name + " 👋</h2><p style='color:#475569;'>Email: " + user.email + " | Role: " + user.role + "</p></html>");
+        JLabel welcome = new JLabel("<html><h2 style='color:#1E3A8A;margin:0;'>Welcome, " + user.name + " 👋</h2>" +
+                "<p style='color:#475569;margin-top:4px;'>Email: <b>" + user.email + "</b> | State: <b>" + user.state + "</b> | Category: <b>" + user.category + "</b></p></html>");
         p.add(welcome, BorderLayout.NORTH);
 
-        String[] columnNames = {"Scheme Name", "Category", "Benefit"};
+        // Citizen's personal schemes
+        String[] columnNames = {"Scheme Name", "Category", "Eligibility & Benefit"};
         String[][] data = {
-            {"PM-KISAN", "Agriculture", "₹6,000 / year income support"},
-            {"NMMS Scholarship", "Education", "₹12,000 / year scholarship"},
-            {"PMMY Mudra Loan", "Business", "Loans up to ₹10 Lakh collateral-free"},
-            {"Ayushman Bharat", "Healthcare", "₹5 Lakh family health cover"}
+            {"National Merit Scholarship", user.category, "₹12,000 / year scholarship for students"},
+            {"State Higher Education Fee Waiver", user.category, "Full tuition waiver for family income under ₹2.5L"},
+            {"Pradhan Mantri Student Loan Scheme", user.category, "Collateral-free low interest education loan"}
         };
         JTable table = new JTable(data, columnNames);
-        table.setRowHeight(28);
+        table.setRowHeight(30);
         table.setFont(new Font("Segoe UI", Font.PLAIN, 13));
         table.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 13));
         p.add(new JScrollPane(table), BorderLayout.CENTER);
 
-        JButton logoutBtn = new JButton("Logout");
+        JButton logoutBtn = new JButton("Close Dashboard");
         logoutBtn.addActionListener(e -> dash.dispose());
         p.add(logoutBtn, BorderLayout.SOUTH);
 
         dash.setContentPane(p);
         dash.setVisible(true);
+    }
+
+    private void openAdminWindow(UserAccount user) {
+        JFrame dash = new JFrame("JanMitra AI — Admin Control Center");
+        dash.setSize(680, 520);
+        dash.setLocationRelativeTo(this);
+
+        JPanel p = new JPanel(new BorderLayout(16, 16));
+        p.setBorder(new EmptyBorder(24, 24, 24, 24));
+        p.setBackground(new Color(248, 250, 252));
+
+        JLabel welcome = new JLabel("<html><h2 style='color:#7C3AED;margin:0;'>Portal Admin Control Center 🛡️</h2>" +
+                "<p style='color:#475569;'>Master database view of all registered citizens and scheme submissions.</p></html>");
+        p.add(welcome, BorderLayout.NORTH);
+
+        String[] cols = {"ID", "Citizen Name", "Email", "State", "Income", "Category"};
+        String[][] allApps = {
+            {"#1", "Aditi Sharma", "aditi@example.com", "Rajasthan", "₹180,000", "Education"},
+            {"#2", "Unit Test Citizen", "unittest@example.com", "Rajasthan", "₹200,000", "Education"},
+            {"#3", "Parv Jain", "parvjain248@gmail.com", "Rajasthan", "₹100,000", "Social Welfare"}
+        };
+        JTable table = new JTable(allApps, cols);
+        table.setRowHeight(28);
+        p.add(new JScrollPane(table), BorderLayout.CENTER);
+
+        JButton closeBtn = new JButton("Close Admin View");
+        closeBtn.addActionListener(e -> dash.dispose());
+        p.add(closeBtn, BorderLayout.SOUTH);
+
+        dash.setContentPane(p);
+        dash.setVisible(true);
+    }
+
+    private void openWebEligibility() {
+        try {
+            Desktop.getDesktop().browse(new URI("http://127.0.0.1:5000/check-eligibility"));
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, "Please open http://127.0.0.1:5000/check-eligibility in your web browser.", "Open Browser", JOptionPane.INFORMATION_MESSAGE);
+        }
     }
 
     private static String hashPassword(String password) {
@@ -355,12 +331,18 @@ public class JanMitraLoginApp extends JFrame {
         String email;
         String passwordHash;
         String role;
+        String state;
+        int income;
+        String category;
 
-        UserAccount(String name, String email, String passwordHash, String role) {
+        UserAccount(String name, String email, String passwordHash, String role, String state, int income, String category) {
             this.name = name;
             this.email = email;
             this.passwordHash = passwordHash;
             this.role = role;
+            this.state = state;
+            this.income = income;
+            this.category = category;
         }
     }
 

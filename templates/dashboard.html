@@ -1,255 +1,656 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Applications Dashboard</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Citizen Dashboard — JanMitra AI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
-    <style>
-        :root {
-            --ink: #1F2A24;
-            --sand: #F3EEE3;
-            --paper: #FFFFFF;
-            --teal: #1B4B43;
-            --teal-deep: #123530;
-            --marigold: #E0912E;
-            --marigold-soft: #F6E4C6;
-            --line: #DCD4C1;
-        }
+<style>
+:root {
+  --primary: #2563EB;
+  --primary-dark: #1D4ED8;
+  --secondary: #10B981;
+  --accent: #F59E0B;
+  --bg: #F8FAFC;
+  --card: #FFFFFF;
+  --text: #0F172A;
+  --text-muted: #475569;
+  --text-soft: #94A3B8;
+  --border: #E2E8F0;
+  --teal: #1B4B43;
+  --teal-deep: #123530;
+  --marigold: #E0912E;
+  --marigold-soft: #F6E4C6;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
+  --shadow-md: 0 8px 24px rgba(15,23,42,0.08);
+  --radius: 16px;
+  --font-display: 'Plus Jakarta Sans', sans-serif;
+  --font-body: 'Inter', sans-serif;
+}
 
-        * { box-sizing: border-box; }
+* { box-sizing: border-box; margin:0; padding:0; }
 
-        body {
-            font-family: "Helvetica Neue", Arial, sans-serif;
-            background: var(--sand);
-            margin: 0;
-            padding: 0;
-            color: var(--ink);
-        }
+body {
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+}
 
-        .page {
-            max-width: 1100px;
-            margin: 0 auto;
-            padding: 40px 20px 80px;
-        }
+/* Navbar */
+.dash-nav {
+  background: #FFFFFF;
+  border-bottom: 1px solid var(--border);
+  padding: 16px 32px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 19px;
+  text-decoration: none;
+  color: var(--text);
+}
+.brand-mark {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+}
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.btn-nav {
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 8px 14px;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all .2s;
+}
+.btn-home { color: var(--text-muted); }
+.btn-home:hover { color: var(--primary); }
+.btn-check {
+  background: var(--marigold-soft);
+  color: var(--teal-deep);
+  border: 1px solid rgba(224, 145, 46, 0.3);
+}
+.btn-logout {
+  color: #DC2626;
+  border: 1px solid rgba(220, 38, 38, 0.2);
+}
+.btn-logout:hover {
+  background: rgba(220, 38, 38, 0.05);
+}
 
-        .masthead {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
-            flex-wrap: wrap;
-            gap: 12px;
-            border-bottom: 3px solid var(--teal);
-            padding-bottom: 16px;
-            margin-bottom: 24px;
-        }
+/* Page Layout */
+.page-container {
+  max-width: 1100px;
+  margin: 32px auto 60px;
+  padding: 0 20px;
+}
 
-        .masthead .kicker {
-            font-size: 13px;
-            letter-spacing: 0.02em;
-            color: var(--teal);
-            margin: 0 0 6px;
-            font-weight: 600;
-        }
+/* Welcome Hero */
+.citizen-hero {
+  background: linear-gradient(135deg, #1E3A8A, #2563EB);
+  color: #fff;
+  border-radius: var(--radius);
+  padding: 32px 36px;
+  margin-bottom: 28px;
+  box-shadow: var(--shadow-md);
+  position: relative;
+  overflow: hidden;
+}
+.citizen-hero h1 {
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 800;
+  margin-bottom: 6px;
+}
+.citizen-hero p {
+  color: rgba(255,255,255,0.85);
+  font-size: 15px;
+}
+.hero-badges {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 14px;
+}
+.badge-citizen {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.25);
+  padding: 5px 14px;
+  border-radius: 100px;
+  font-size: 12.5px;
+  font-weight: 700;
+}
 
-        .masthead h1 {
-            font-family: Georgia, serif;
-            font-size: 26px;
-            margin: 0;
-        }
+/* Profile Card */
+.profile-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 26px 28px;
+  margin-bottom: 28px;
+  box-shadow: var(--shadow-sm);
+}
+.card-title {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 750;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: var(--text);
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 12px;
+}
+.card-title .title-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.card-title i { color: var(--primary); }
 
-        .count-pill {
-            font-size: 13.5px;
-            font-weight: 600;
-            background: var(--marigold-soft);
-            color: var(--teal-deep);
-            padding: 6px 14px;
-            border-radius: 999px;
-        }
+.profile-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+@media (max-width: 800px) {
+  .profile-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 500px) {
+  .profile-grid { grid-template-columns: 1fr; }
+}
 
-        .search-bar {
-            margin-bottom: 18px;
-        }
+.profile-field {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px 16px;
+}
+.field-label {
+  font-size: 11.5px;
+  color: var(--text-soft);
+  text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  margin-bottom: 4px;
+}
+.field-value {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text);
+}
+.field-value.highlight { color: var(--primary); }
 
-        .search-bar input {
-            width: 100%;
-            max-width: 320px;
-            padding: 10px 12px;
-            font-size: 14px;
-            border: 1px solid #C9C1AC;
-            border-radius: 4px;
-            background: var(--paper);
-        }
+/* Applied Schemes Section */
+.applied-section {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 26px 28px;
+  margin-bottom: 32px;
+  box-shadow: var(--shadow-sm);
+}
+.app-table-wrap {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  margin-top: 14px;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13.5px;
+}
+thead th {
+  background: var(--bg);
+  color: var(--text-muted);
+  font-weight: 700;
+  font-size: 12px;
+  text-transform: uppercase;
+  padding: 12px 16px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+tbody td {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border);
+}
+tbody tr:last-child td { border-bottom: none; }
+tbody tr:hover { background: #F8FAFC; }
 
-        .search-bar input:focus {
-            outline: none;
-            border-color: var(--teal);
-            box-shadow: 0 0 0 3px rgba(27, 75, 67, 0.14);
-        }
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11.5px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 100px;
+}
+.status-pill.review {
+  background: rgba(245, 158, 11, 0.12);
+  color: #D97706;
+}
+.status-pill.approved {
+  background: rgba(16, 185, 129, 0.12);
+  color: #059669;
+}
+.status-pill.rejected {
+  background: rgba(239, 68, 68, 0.12);
+  color: #DC2626;
+}
+.status-pill.disbursed {
+  background: rgba(37, 99, 235, 0.12);
+  color: #2563EB;
+}
+.ref-pill {
+  font-family: monospace;
+  font-weight: 700;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 12px;
+}
+.cat-tag {
+  background: var(--marigold-soft);
+  color: var(--teal-deep);
+  font-weight: 700;
+  font-size: 11.5px;
+  padding: 3px 8px;
+  border-radius: 4px;
+  display: inline-block;
+}
 
-        .table-wrap {
-            background: var(--paper);
-            border: 1px solid var(--line);
-            border-radius: 6px;
-            overflow-x: auto;
-        }
+/* Recommended Schemes Cards */
+.schemes-section {
+  margin-top: 36px;
+}
+.schemes-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+}
+@media (max-width: 760px) {
+  .schemes-grid { grid-template-columns: 1fr; }
+}
+.scheme-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+.scheme-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+.scheme-card h3 {
+  font-size: 16.5px;
+  font-weight: 750;
+  margin-bottom: 8px;
+  color: var(--text);
+}
+.scheme-card p {
+  font-size: 13.5px;
+  color: var(--text-muted);
+  margin-bottom: 16px;
+  line-height: 1.5;
+}
+.scheme-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(16, 185, 129, 0.12);
+  color: #059669;
+  font-size: 11.5px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 100px;
+  margin-bottom: 10px;
+}
+.card-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid var(--border);
+  padding-top: 14px;
+  margin-top: 8px;
+}
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 13.5px;
-            min-width: 900px;
-        }
+/* Apply Buttons */
+.btn-apply {
+  background: var(--primary);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all .2s ease;
+}
+.btn-apply:hover {
+  background: var(--primary-dark);
+  transform: translateY(-1px);
+}
+.btn-applied {
+  background: #E2E8F0;
+  color: #059669;
+  border: 1px solid #A7F3D0;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: default;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
 
-        thead th {
-            text-align: left;
-            font-size: 12px;
-            font-weight: 700;
-            letter-spacing: 0.03em;
-            text-transform: uppercase;
-            color: var(--paper);
-            background: var(--teal);
-            padding: 12px 14px;
-            white-space: nowrap;
-        }
-
-        tbody td {
-            padding: 12px 14px;
-            border-bottom: 1px solid var(--line);
-            vertical-align: top;
-        }
-
-        tbody tr:last-child td {
-            border-bottom: none;
-        }
-
-        tbody tr:hover {
-            background: var(--marigold-soft);
-        }
-
-        .category-tag {
-            display: inline-block;
-            font-size: 12px;
-            font-weight: 600;
-            background: var(--marigold-soft);
-            color: var(--teal-deep);
-            padding: 3px 9px;
-            border-radius: 3px;
-            white-space: nowrap;
-        }
-
-        .mono {
-            font-variant-numeric: tabular-nums;
-        }
-
-        .empty-state {
-            font-size: 14.5px;
-            color: #6b6e63;
-            background: var(--paper);
-            border: 1px solid var(--line);
-            border-radius: 6px;
-            padding: 28px;
-            text-align: center;
-        }
-
-        @media (max-width: 600px) {
-            .page { padding: 28px 14px 60px; }
-            .masthead h1 { font-size: 21px; }
-        }
-    </style>
+/* Empty State */
+.empty-box {
+  background: var(--card);
+  border: 1px dashed var(--border);
+  border-radius: var(--radius);
+  padding: 36px 24px;
+  text-align: center;
+  color: var(--text-muted);
+}
+.empty-box i {
+  font-size: 34px;
+  color: var(--text-soft);
+  margin-bottom: 12px;
+}
+</style>
 </head>
-
 <body>
 
-    <div class="page">
+<!-- Navbar -->
+<header class="dash-nav">
+  <a href="/" class="brand">
+    <div class="brand-mark"><i class="fa-solid fa-sparkles"></i></div>
+    JanMitra AI
+  </a>
+  <div class="nav-actions">
+    <a href="/" class="btn-nav btn-home"><i class="fa-solid fa-house"></i> Home</a>
+    {% if current_user and current_user.role == 'admin' %}
+    <a href="/admin" class="btn-nav" style="background:#7C3AED;color:#fff;"><i class="fa-solid fa-shield-halved"></i> Admin Portal</a>
+    {% endif %}
+    <a href="/logout" class="btn-nav btn-logout"><i class="fa-solid fa-right-from-bracket"></i> Log Out</a>
+  </div>
+</header>
 
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;font-size:13.5px;flex-wrap:wrap;gap:12px;">
-            <div style="display:flex;align-items:center;gap:16px;">
-                <a href="/" style="text-decoration:none;color:var(--teal);font-weight:700;display:inline-flex;align-items:center;gap:6px;">
-                    &larr; Back to JanMitra AI
-                </a>
-                <a href="/check-eligibility" style="text-decoration:none;color:var(--teal);font-weight:600;padding:5px 12px;background:var(--marigold-soft);border-radius:4px;">
-                    + Check New Eligibility
-                </a>
-            </div>
-            <div style="display:flex;align-items:center;gap:14px;">
-                {% if current_user %}
-                <span style="font-weight:600;color:var(--teal-deep);">
-                    Logged in as: <strong>{{ current_user.name }}</strong> ({{ current_user.email }})
-                </span>
-                {% endif %}
-                <a href="/logout" style="text-decoration:none;color:#B3432B;font-weight:700;padding:5px 12px;border:1px solid #B3432B;border-radius:4px;">
-                    Log out
-                </a>
-            </div>
-        </div>
+<main class="page-container">
 
-        <div class="masthead">
-            <div>
-                <p class="kicker">Citizen Welfare Database</p>
-                <h1>Applications dashboard</h1>
-            </div>
-            <span class="count-pill">{{ applications|length }} total submissions</span>
-        </div>
+  <!-- Welcome Banner -->
+  <section class="citizen-hero">
+    <h1>Welcome, {{ current_user.name }} 👋</h1>
+    <p>Manage your welfare benefits, track all your applied government schemes, and discover new assistance programs below.</p>
+    <div class="hero-badges">
+      <div class="badge-citizen">
+        <i class="fa-solid fa-circle-check"></i> Verified Account: {{ current_user.email }}
+      </div>
+      <div class="badge-citizen">
+        <i class="fa-solid fa-file-signature"></i> Schemes Applied: <span id="heroAppliedCount" style="margin-left:4px;">{{ applied_schemes|length }}</span>
+      </div>
+    </div>
+  </section>
 
-        {% if applications|length == 0 %}
-            <div class="empty-state">No applications submitted yet.</div>
-        {% else %}
-            <div class="search-bar">
-                <input type="text" id="searchInput" placeholder="Search by name, email, or mobile..." onkeyup="filterTable()">
-            </div>
+  <!-- Logged-in Citizen Profile Card -->
+  <section class="profile-card">
+    <div class="card-title">
+      <div class="title-left">
+        <i class="fa-solid fa-id-card"></i> Your Citizen Profile Details
+      </div>
+      <a href="/check-eligibility" class="btn-nav btn-check" style="font-size:12px;padding:5px 12px;">
+        <i class="fa-solid fa-pen-to-square"></i> Update Details
+      </a>
+    </div>
+    
+    <div class="profile-grid">
+      <div class="profile-field">
+        <div class="field-label">Citizen Name</div>
+        <div class="field-value">{{ citizen_profile.name }}</div>
+      </div>
+      <div class="profile-field">
+        <div class="field-label">Registered Email</div>
+        <div class="field-value highlight">{{ citizen_profile.email }}</div>
+      </div>
+      <div class="profile-field">
+        <div class="field-label">Mobile Number</div>
+        <div class="field-value">{{ citizen_profile.mobile or 'Not provided' }}</div>
+      </div>
+      <div class="profile-field">
+        <div class="field-label">Age</div>
+        <div class="field-value">{{ citizen_profile.age or 'Not provided' }} years</div>
+      </div>
+      <div class="profile-field">
+        <div class="field-label">State / Region</div>
+        <div class="field-value">{{ citizen_profile.state or 'All India' }}</div>
+      </div>
+      <div class="profile-field">
+        <div class="field-label">Annual Family Income</div>
+        <div class="field-value">₹{{ "{:,}".format(citizen_profile.income|int) if citizen_profile.income else 'Not provided' }}</div>
+      </div>
+    </div>
+  </section>
 
-            <div class="table-wrap">
-                <table id="applicationsTable">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Name</th>
-                            <th>Email</th>
-                            <th>Mobile</th>
-                            <th>Age</th>
-                            <th>State</th>
-                            <th>Income (₹)</th>
-                            <th>Scheme category</th>
-                            <th>Submitted</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for app in applications %}
-                        <tr>
-                            <td class="mono">{{ app.ea_id }}</td>
-                            <td>{{ app.ea_name }}</td>
-                            <td>{{ app.ea_email }}</td>
-                            <td class="mono">{{ app.ea_mobile }}</td>
-                            <td class="mono">{{ app.ea_age }}</td>
-                            <td>{{ app.ea_state }}</td>
-                            <td class="mono">{{ app.ea_income }}</td>
-                            <td><span class="category-tag">{{ app.ea_scheme_category }}</span></td>
-                            <td class="mono">{{ app.ea_created_at }}</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        {% endif %}
-
+  <!-- ALL APPLIED SCHEMES BY THIS PARTICULAR USER -->
+  <section class="applied-section">
+    <div class="card-title">
+      <div class="title-left">
+        <i class="fa-solid fa-file-shield" style="color:var(--secondary);"></i> My Applied Government Schemes
+        <span class="status-pill approved" id="appliedCountBadge" style="margin-left:8px;">{{ applied_schemes|length }} Applied</span>
+      </div>
+      <span style="font-size:12.5px;color:var(--text-soft);font-weight:500;">Real-time Application Status Tracker</span>
     </div>
 
-    <script>
-        function filterTable() {
-            const input = document.getElementById("searchInput").value.toLowerCase();
-            const rows = document.querySelectorAll("#applicationsTable tbody tr");
+    {% if applied_schemes|length == 0 %}
+    <div class="empty-box" id="emptyAppliedBox">
+      <i class="fa-solid fa-inbox"></i>
+      <h3 style="margin-bottom:6px;">No Scheme Applications Submitted Yet</h3>
+      <p style="margin-bottom:16px;">You can apply for multiple eligible schemes from the list below with a single click!</p>
+      <a href="#recommendedSection" class="btn-apply" style="padding:10px 20px;">
+        <i class="fa-solid fa-arrow-down"></i> Browse & Apply for Schemes
+      </a>
+    </div>
+    {% endif %}
 
-            rows.forEach(function (row) {
-                const name = row.children[1].textContent.toLowerCase();
-                const email = row.children[2].textContent.toLowerCase();
-                const mobile = row.children[3].textContent.toLowerCase();
+    <div class="app-table-wrap" id="appliedTableWrap" style="{% if applied_schemes|length == 0 %}display:none;{% endif %}">
+      <table id="appliedSchemesTable">
+        <thead>
+          <tr>
+            <th>Application Ref #</th>
+            <th>Scheme Name</th>
+            <th>Category</th>
+            <th>Status</th>
+            <th>Applied On</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="appliedTableBody">
+          {% for app in applied_schemes %}
+          <tr>
+            <td><span class="ref-pill">{{ app.reference_no }}</span></td>
+            <td><strong>{{ app.scheme_name }}</strong></td>
+            <td><span class="cat-tag">{{ app.scheme_category or citizen_profile.schemeCategory or 'Welfare' }}</span></td>
+            <td>
+              <span class="status-pill {% if app.status == 'Approved' %}approved{% elif app.status == 'Rejected' %}rejected{% elif app.status == 'Disbursed' %}disbursed{% else %}review{% endif %}">
+                <i class="fa-solid {% if app.status == 'Approved' %}fa-circle-check{% elif app.status == 'Rejected' %}fa-circle-xmark{% elif app.status == 'Disbursed' %}fa-money-bill-transfer{% else %}fa-clock{% endif %}"></i> {{ app.status }}
+              </span>
+            </td>
+            <td style="color:var(--text-soft);font-size:12.5px;">{{ app.applied_at }}</td>
+            <td>
+              <button type="button" onclick="showSlip('{{ app.reference_no }}', '{{ app.scheme_name }}', '{{ app.status }}', '{{ app.applied_at }}')" style="background:none;border:none;color:var(--primary);font-size:12.5px;font-weight:700;cursor:pointer;text-decoration:underline;">
+                View Slip
+              </button>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </section>
 
-                const matches = name.includes(input) || email.includes(input) || mobile.includes(input);
-                row.style.display = matches ? "" : "none";
-            });
-        }
-    </script>
+  <!-- RECOMMENDED SCHEMES WITH DIRECT MULTIPLE APPLY BUTTONS -->
+  <section class="schemes-section" id="recommendedSection">
+    <div class="card-title">
+      <div class="title-left">
+        <i class="fa-solid fa-wand-magic-sparkles"></i> Eligible Schemes Available for You to Apply
+      </div>
+      <a href="/check-eligibility" class="btn-nav btn-home" style="font-size:13px;">
+        <i class="fa-solid fa-magnifying-glass"></i> Find More Schemes
+      </a>
+    </div>
+
+    {% if matched_schemes and matched_schemes|length > 0 %}
+    <div class="schemes-grid">
+      {% for s in matched_schemes %}
+      <div class="scheme-card" id="card-{{ loop.index }}">
+        <div>
+          <span class="scheme-tag"><i class="fa-solid fa-check"></i> Qualified Match</span>
+          <h3>{{ s.scheme_name }}</h3>
+          <p>{{ s.benefits or s.details or 'Financial and welfare assistance available under central and state citizen welfare guidelines.' }}</p>
+        </div>
+        <div class="card-bottom">
+          <span class="cat-tag">{{ s.scheme_category or citizen_profile.schemeCategory }}</span>
+          {% if s.scheme_name in applied_scheme_names %}
+          <button class="btn-applied" disabled>
+            <i class="fa-solid fa-circle-check"></i> Applied
+          </button>
+          {% else %}
+          <button type="button" class="btn-apply" onclick="applyScheme('{{ s.scheme_name }}', '{{ s.scheme_category or citizen_profile.schemeCategory }}', this)">
+            <i class="fa-solid fa-paper-plane"></i> Apply Now
+          </button>
+          {% endif %}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-box">
+      <i class="fa-solid fa-clipboard-check"></i>
+      <h3>No Pre-Matched Schemes Found</h3>
+      <p style="margin-bottom:16px;">Complete your 1-minute scheme check to load personalized recommendations for your category!</p>
+      <a href="/check-eligibility" class="btn-apply" style="padding:10px 20px;">
+        <i class="fa-solid fa-arrow-right"></i> Check Eligibility Now
+      </a>
+    </div>
+    {% endif %}
+  </section>
+
+</main>
+
+<script>
+// Apply for a scheme via AJAX (supports applying for multiple schemes)
+async function applyScheme(schemeName, schemeCategory, btn) {
+  const originalHtml = btn.innerHTML;
+  btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Submitting...';
+  btn.disabled = true;
+
+  try {
+    const res = await fetch('/api/apply-scheme', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ scheme_name: schemeName, scheme_category: schemeCategory })
+    });
+    const data = await res.json();
+
+    if (res.ok && data.success) {
+      // Update button state
+      btn.className = 'btn-applied';
+      btn.innerHTML = '<i class="fa-solid fa-circle-check"></i> Applied';
+      btn.disabled = true;
+
+      // Show Application Confirmation
+      alert(`🎉 Application Successfully Submitted!\n\nScheme: ${schemeName}\nApplication Ref No: ${data.reference_no}\nStatus: ${data.status}\n\nThis application is now listed in 'My Applied Government Schemes' above!`);
+
+      // Dynamically add to the table
+      const emptyBox = document.getElementById('emptyAppliedBox');
+      if (emptyBox) emptyBox.style.display = 'none';
+
+      const tableWrap = document.getElementById('appliedTableWrap');
+      if (tableWrap) tableWrap.style.display = 'block';
+
+      const tbody = document.getElementById('appliedTableBody');
+      const now = new Date().toISOString().replace('T', ' ').substring(0, 19);
+      const newRow = document.createElement('tr');
+      newRow.innerHTML = `
+        <td><span class="ref-pill">${data.reference_no}</span></td>
+        <td><strong>${schemeName}</strong></td>
+        <td><span class="cat-tag">${schemeCategory || 'Welfare'}</span></td>
+        <td><span class="status-pill review"><i class="fa-solid fa-clock"></i> ${data.status}</span></td>
+        <td style="color:var(--text-soft);font-size:12.5px;">${now}</td>
+        <td>
+          <button type="button" onclick="showSlip('${data.reference_no}', '${schemeName}', '${data.status}', '${now}')" style="background:none;border:none;color:var(--primary);font-size:12.5px;font-weight:700;cursor:pointer;text-decoration:underline;">
+            View Slip
+          </button>
+        </td>
+      `;
+      tbody.insertBefore(newRow, tbody.firstChild);
+
+      // Update counters
+      const countBadge = document.getElementById('appliedCountBadge');
+      const heroCount = document.getElementById('heroAppliedCount');
+      const currentCount = parseInt(heroCount ? heroCount.textContent : '0') + 1;
+      if (heroCount) heroCount.textContent = currentCount;
+      if (countBadge) countBadge.textContent = `${currentCount} Applied`;
+
+    } else {
+      alert(data.message || 'Could not submit application. Please try again.');
+      btn.innerHTML = originalHtml;
+      btn.disabled = false;
+    }
+  } catch (err) {
+    alert('Network error submitting application. Please try again.');
+    btn.innerHTML = originalHtml;
+    btn.disabled = false;
+  }
+}
+
+function showSlip(refNo, schemeName, status, date) {
+  alert(`=========================================\n       JANMITRA CITIZEN WELFARE SLIP     \n=========================================\n\nApplication Ref: ${refNo}\nScheme: ${schemeName}\nCitizen: {{ current_user.name }}\nEmail: {{ current_user.email }}\nDate: ${date}\nStatus: ${status}\n\nDepartment: Ministry of Citizen Welfare & Public Schemes\nTracking URL: http://127.0.0.1:5000/dashboard\n=========================================`);
+}
+</script>
 
 </body>
 </html>
