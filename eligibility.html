@@ -227,6 +227,15 @@
 
     <div class="page">
 
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:28px;font-family:'Helvetica Neue', Arial, sans-serif;">
+            <a href="/" style="text-decoration:none;color:var(--teal);font-weight:700;display:inline-flex;align-items:center;gap:6px;font-size:14px;">
+                &larr; Back to JanMitra AI
+            </a>
+            <div id="eligAuthArea" style="display:inline-flex;align-items:center;gap:12px;">
+                <a href="/login" style="text-decoration:none;color:var(--teal);font-weight:600;font-size:13px;padding:6px 14px;border:1px solid var(--teal);border-radius:4px;">Citizen Login</a>
+            </div>
+        </div>
+
         <div class="masthead">
             <p class="kicker">Government Welfare Schemes</p>
             <h1>Check your eligibility</h1>
@@ -302,12 +311,26 @@
                 </div>
             </div>
 
-            <p class="section-label spaced">Income</p>
+            <p class="section-label spaced">Income & Profile</p>
 
             <div class="row">
                 <div class="field">
                     <label for="income">Annual income <span class="hint">(₹)</span></label>
                     <input type="number" id="income" name="income" placeholder="e.g. 250000" min="0" required>
+                </div>
+                <div class="field">
+                    <label for="occupation">Occupation</label>
+                    <select id="occupation" name="occupation" required>
+                        <option value="" disabled selected>Select occupation</option>
+                        <option value="Student">Student</option>
+                        <option value="Farmer">Farmer</option>
+                        <option value="Business Owner">Business Owner</option>
+                        <option value="Self Employed">Self Employed</option>
+                        <option value="Salaried Employee">Salaried Employee</option>
+                        <option value="Unemployed">Unemployed / Job Seeker</option>
+                        <option value="Senior Citizen">Senior Citizen</option>
+                        <option value="Any">Other</option>
+                    </select>
                 </div>
             </div>
 
@@ -395,6 +418,30 @@
         //             resultsDiv.innerHTML = '<div class="empty-state">Could not reach the eligibility service. Please try again.</div>';
         //         });
         // });
+    </script>
+
+
+    <script>
+        // Check if citizen is logged in to prefill name & email
+        fetch('/api/auth/status')
+            .then(res => res.json())
+            .then(data => {
+                if (data.logged_in && data.user) {
+                    const nameInput = document.getElementById('name');
+                    const emailInput = document.getElementById('email');
+                    if (nameInput && !nameInput.value) nameInput.value = data.user.name;
+                    if (emailInput && !emailInput.value) emailInput.value = data.user.email;
+                    
+                    const authArea = document.getElementById('eligAuthArea');
+                    if (authArea) {
+                        authArea.innerHTML = `
+                            <span style="font-size:13px;color:var(--teal);font-weight:600;">Welcome, ${data.user.name.split(' ')[0]}</span>
+                            <a href="/dashboard" style="text-decoration:none;color:var(--teal);font-weight:600;font-size:13px;padding:6px 12px;background:var(--marigold-soft);border-radius:4px;">Dashboard</a>
+                        `;
+                    }
+                }
+            })
+            .catch(() => {});
     </script>
 
 </body>

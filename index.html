@@ -377,7 +377,7 @@ footer{border-top:1px solid var(--border);padding:72px 0 32px;}
     <a href="#" class="logo"><span class="logo-mark"><i class="fa-solid fa-sparkles"></i></span>JanMitra AI</a>
     <div class="nav-links">
       <a href="#hero">Home</a>
-      <!-- <a href="#features">Features</a> -->
+      <a href="#features">Features</a>
       <a href="#how-it-works">How It Works</a>
       <a href="#ai-showcase">AI Assistant</a>
       <a href="#why">About</a>
@@ -385,7 +385,9 @@ footer{border-top:1px solid var(--border);padding:72px 0 32px;}
     </div>
     <div class="nav-actions">
       <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode"><i class="fa-solid fa-moon"></i></button>
-      <a href="#" class="btn-ghost">Login</a>
+      <div id="navAuthArea" style="display:inline-flex;align-items:center;gap:12px;">
+        <a href="/login" class="btn-ghost" id="navLoginBtn">Login</a>
+      </div>
       <a href="/check-eligibility" class="btn btn-primary btn-ripple">Check Eligibility</a>
       <button class="mobile-toggle"><i class="fa-solid fa-bars"></i></button>
     </div>
@@ -401,8 +403,8 @@ footer{border-top:1px solid var(--border);padding:72px 0 32px;}
       <h1>Discover Government Schemes You're Eligible For — <span class="gradient-text">Instantly with AI</span></h1>
       <p>JanMitra AI reads through hundreds of confusing government schemes so you don't have to. Answer a few simple questions or chat with our AI, and get personalized, easy-to-understand recommendations in minutes.</p>
       <div class="hero-ctas">
-        <a href="#" class="btn btn-primary btn-ripple">Check My Eligibility</a>
-        <a href="#" class="btn btn-secondary btn-ripple"><i class="fa-solid fa-play"></i> Watch Demo</a>
+        <a href="/check-eligibility" class="btn btn-primary btn-ripple">Check My Eligibility</a>
+        <a href="#how-it-works" class="btn btn-secondary btn-ripple"><i class="fa-solid fa-play"></i> How It Works</a>
       </div>
       <div class="hero-stats-inline">
         <div><strong>1000+</strong><span>Government Schemes</span></div>
@@ -468,7 +470,7 @@ footer{border-top:1px solid var(--border);padding:72px 0 32px;}
 </section>
  
 <!-- FEATURES -->
-<!-- <section class="section" id="features" style="background:var(--card);">
+<section class="section" id="features" style="background:var(--card);">
   <div class="container">
     <div class="section-head reveal">
       <span class="eyebrow">Features</span>
@@ -477,7 +479,7 @@ footer{border-top:1px solid var(--border);padding:72px 0 32px;}
     </div>
     <div class="features-grid" id="featuresGrid"></div>
   </div>
-</section> -->
+</section>
  
 <!-- AI SHOWCASE -->
 <section class="section" id="ai-showcase">
@@ -488,10 +490,21 @@ footer{border-top:1px solid var(--border);padding:72px 0 32px;}
       <p>No forms to fill. Chat naturally, like you would with a knowledgeable friend.</p>
     </div>
     <div class="ai-showcase reveal">
-      <div class="chat-window">
-        <div class="chat-bubble user">I am a second-year engineering student from Rajasthan with family income below ₹2 lakh.</div>
-        <div class="chat-bubble ai">You are likely eligible for 6 schemes, including central scholarships and state fee waivers. Here's what matches your profile 👇</div>
-        <div class="chat-bubble ai"><span class="typing-dots"><span></span><span></span><span></span></span></div>
+      <div class="chat-window" id="chatWindow">
+        <div id="chatMessages" style="max-height:280px;overflow-y:auto;padding-right:6px;">
+          <div class="chat-bubble user">I am a second-year engineering student from Rajasthan with family income below ₹2 lakh.</div>
+          <div class="chat-bubble ai">You are likely eligible for 6 schemes, including central scholarships and state fee waivers. Here's what matches your profile 👇</div>
+        </div>
+        <form id="aiChatForm" onsubmit="sendAiChat(event)" style="display:flex;gap:8px;margin-top:14px;">
+          <input type="text" id="aiChatInput" placeholder="Ask AI: e.g. student scholarship, farmer loan..." style="flex:1;padding:12px 18px;border:1px solid var(--border);border-radius:100px;background:var(--card);color:var(--text);font-size:13.5px;outline:none;">
+          <button type="submit" class="btn btn-primary" style="padding:10px 20px;border-radius:100px;font-size:14px;"><i class="fa-solid fa-paper-plane"></i></button>
+        </form>
+        <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;">
+          <button type="button" class="match-pill" style="cursor:pointer;" onclick="quickAiPrompt('Scholarships for engineering students')">🎓 Students</button>
+          <button type="button" class="match-pill" style="cursor:pointer;" onclick="quickAiPrompt('Farmer income support PM Kisan')">🌾 Farmers</button>
+          <button type="button" class="match-pill" style="cursor:pointer;" onclick="quickAiPrompt('Business loans Mudra scheme')">💼 Business Loans</button>
+          <button type="button" class="match-pill" style="cursor:pointer;" onclick="quickAiPrompt('Senior citizen old age pension')">👵 Senior Citizens</button>
+        </div>
       </div>
       <div class="result-schemes">
         <h3>Recommended for you</h3>
@@ -546,10 +559,11 @@ footer{border-top:1px solid var(--border);padding:72px 0 32px;}
     <div class="section-head reveal">
       <span class="eyebrow">Why JanMitra AI</span>
       <h2>Built for real people, not paperwork</h2>
+      <p style="margin-top:14px;max-width:760px;margin-left:auto;margin-right:auto;font-size:16px;line-height:1.7;">
+        India has thousands of government welfare schemes, but most citizens who qualify never find out about them because the information is scattered and confusing. JanMitra AI translates official eligibility rules into plain language, giving every citizen a friendly AI guide to their entitled benefits.
+      </p>
     </div>
-    <div class="" id="whyGrid">
-      So the problem is, India has thousands of government welfare schemes, but most people who actually qualify never find out about them — the information's scattered across hundreds of websites, written in complicated language, and there's no single place to check what you're eligible for. JanMitra AI fixes that — you describe your situation in plain language, or fill a short form, and it matches you against real scheme eligibility rules and shows you exactly what you qualify for, in simple English or Hindi. 'Jan Mitra' actually means 'citizen's friend' in Hindi — that's the whole idea, it's meant to feel like a friend helping you navigate the system, not another confusing government website."
-    </div>
+    <div class="why-grid" id="whyGrid"></div>
   </div>
 </section>
  
@@ -568,15 +582,16 @@ footer{border-top:1px solid var(--border);padding:72px 0 32px;}
 </section>
  
 <!-- TESTIMONIALS -->
-<!-- <section class="section" style="background:var(--card);">
+<section class="section" style="background:var(--card);">
   <div class="container">
     <div class="section-head reveal">
       <span class="eyebrow">Testimonials</span>
       <h2>Real people, real outcomes</h2>
+      <p>Verified stories of citizens empowered across India.</p>
     </div>
     <div class="testi-grid" id="testiGrid"></div>
   </div>
-</section> -->
+</section>
  
 <!-- FAQ -->
 <section class="section" id="faq">
@@ -596,8 +611,8 @@ footer{border-top:1px solid var(--border);padding:72px 0 32px;}
       <h2>Start Discovering Government Benefits Today</h2>
       <p>Let AI help you find the schemes you deserve.</p>
       <div class="hero-ctas" style="justify-content:center;">
-        <a href="#" class="btn btn-primary btn-ripple">Check Eligibility</a>
-        <a href="#" class="btn btn-secondary btn-ripple">Talk to AI</a>
+        <a href="/check-eligibility" class="btn btn-primary btn-ripple">Check Eligibility</a>
+        <a href="#ai-showcase" class="btn btn-secondary btn-ripple">Talk to AI</a>
       </div>
     </div>
   </div>
@@ -640,17 +655,46 @@ footer{border-top:1px solid var(--border);padding:72px 0 32px;}
 // Navbar scroll
 const navbar = document.getElementById('navbar');
 window.addEventListener('scroll', () => {
-  navbar.classList.toggle('scrolled', window.scrollY > 40);
+  if (navbar) navbar.classList.toggle('scrolled', window.scrollY > 40);
 });
  
-// Theme toggle
+// Theme toggle with localStorage persistence
 const themeToggle = document.getElementById('themeToggle');
 const html = document.documentElement;
-themeToggle.addEventListener('click', () => {
-  const next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-  html.setAttribute('data-theme', next);
-  themeToggle.innerHTML = next === 'dark' ? '<i class="fa-solid fa-sun"></i>' : '<i class="fa-solid fa-moon"></i>';
-});
+const savedTheme = localStorage.getItem('janmitra_theme') || 'light';
+html.setAttribute('data-theme', savedTheme);
+if (themeToggle) {
+  themeToggle.innerHTML = savedTheme === 'dark' ? '<i class="fa-solid fa-sun"></i>' : '<i class="fa-solid fa-moon"></i>';
+  themeToggle.addEventListener('click', () => {
+    const next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    html.setAttribute('data-theme', next);
+    localStorage.setItem('janmitra_theme', next);
+    themeToggle.innerHTML = next === 'dark' ? '<i class="fa-solid fa-sun"></i>' : '<i class="fa-solid fa-moon"></i>';
+  });
+}
+
+// Dynamic Auth State in Navbar
+async function checkNavbarAuth() {
+  try {
+    const res = await fetch('/api/auth/status');
+    const data = await res.json();
+    const navAuth = document.getElementById('navAuthArea');
+    if (!navAuth) return;
+    if (data.logged_in && data.user) {
+      navAuth.innerHTML = `
+        <a href="/dashboard" class="btn-ghost" style="display:inline-flex;align-items:center;gap:6px;font-weight:700;color:var(--primary);">
+          <i class="fa-solid fa-circle-user" style="font-size:18px;"></i> ${data.user.name.split(' ')[0]}
+        </a>
+        <a href="/logout" class="btn-ghost" title="Logout" style="font-size:13px;color:var(--text-soft);padding:4px 8px;">
+          <i class="fa-solid fa-right-from-bracket"></i>
+        </a>
+      `;
+    } else {
+      navAuth.innerHTML = `<a href="/login" class="btn-ghost" id="navLoginBtn">Login</a>`;
+    }
+  } catch(e) {}
+}
+checkNavbarAuth();
  
 // Ripple effect
 document.querySelectorAll('.btn-ripple').forEach(btn => {
@@ -707,7 +751,7 @@ const features = [
   {icon:'fa-solid fa-shield-halved', color:'linear-gradient(135deg,#10B981,#34D399)', title:'Secure Login', desc:'Your data is encrypted and never shared without consent.'},
   {icon:'fa-solid fa-bell', color:'linear-gradient(135deg,#F59E0B,#FBBF24)', title:'Notifications', desc:'Stay updated on deadlines, new schemes, and application status.'},
 ];
-document.getElementById('featuresGrid').innerHTML = features.map(f => `
+const fg = document.getElementById('featuresGrid'); if (fg) fg.innerHTML = features.map(f => `
   <div class="feature-card reveal">
     <div class="feature-icon" style="background:${f.color}"><i class="${f.icon}"></i></div>
     <h4>${f.title}</h4><p>${f.desc}</p>
@@ -724,7 +768,7 @@ const whys = [
   {icon:'fa-solid fa-gauge-high', title:'Fast Results'},
   {icon:'fa-solid fa-gift', title:'Free to Use'},
 ];
-document.getElementById('whyGrid').innerHTML = whys.map(w => `
+const wg = document.getElementById('whyGrid'); if (wg) wg.innerHTML = whys.map(w => `
   <div class="why-card reveal"><div class="why-icon"><i class="${w.icon}"></i></div><h4>${w.title}</h4></div>`).join('');
  
 // Testimonials
@@ -736,7 +780,7 @@ const testis = [
   {name:'Priya Nair', role:'NGO Volunteer', initials:'PN', quote:'We use JanMitra AI to help entire villages find benefits faster.'},
   {name:'Karan Mehta', role:'Business Owner', initials:'KM', quote:'The AI chat felt like talking to a knowledgeable friend, not a form.'},
 ];
-document.getElementById('testiGrid').innerHTML = testis.map(t => `
+const tg = document.getElementById('testiGrid'); if (tg) tg.innerHTML = testis.map(t => `
   <div class="testi-card reveal">
     <div class="testi-top"><div class="avatar">${t.initials}</div><div><h5>${t.name}</h5><span>${t.role}</span></div></div>
     <p>"${t.quote}"</p>
@@ -751,7 +795,7 @@ const faqs = [
   {q:'Can I apply directly?', a:'JanMitra AI guides you step-by-step and links you to the official application portal for each scheme.'},
   {q:'Does it support state schemes?', a:'Yes, we cover both central government schemes and state-specific schemes across India.'},
 ];
-document.getElementById('faqList').innerHTML = faqs.map((f,i) => `
+const fq = document.getElementById('faqList'); if (fq) fq.innerHTML = faqs.map((f,i) => `
   <div class="faq-item ${i===0?'open':''}">
     <div class="faq-q">${f.q}<i class="fa-solid fa-plus"></i></div>
     <div class="faq-a">${f.a}</div>
@@ -764,6 +808,65 @@ document.querySelectorAll('.faq-q').forEach(q => {
     if(!wasOpen) item.classList.add('open');
   });
 });
+
+// Interactive AI Chat Assistant
+async function sendAiChat(e) {
+  if (e) e.preventDefault();
+  const input = document.getElementById('aiChatInput');
+  const msg = input.value.trim();
+  if (!msg) return;
+  input.value = '';
+
+  const chatContainer = document.getElementById('chatMessages');
+  const userBubble = document.createElement('div');
+  userBubble.className = 'chat-bubble user';
+  userBubble.textContent = msg;
+  chatContainer.appendChild(userBubble);
+
+  const typingBubble = document.createElement('div');
+  typingBubble.className = 'chat-bubble ai';
+  typingBubble.innerHTML = '<span class="typing-dots"><span></span><span></span><span></span></span> Analyzing criteria...';
+  chatContainer.appendChild(typingBubble);
+  chatContainer.scrollTop = chatContainer.scrollHeight;
+
+  try {
+    const res = await fetch('/api/ai-chat', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ message: msg })
+    });
+    const data = await res.json();
+    typingBubble.innerHTML = `<strong>${data.reply}</strong>`;
+    
+    if (data.schemes && data.schemes.length > 0) {
+      const schemesList = document.createElement('div');
+      schemesList.style.marginTop = '8px';
+      data.schemes.forEach(s => {
+        const item = document.createElement('div');
+        item.style.padding = '8px 10px';
+        item.style.margin = '4px 0';
+        item.style.background = 'var(--bg)';
+        item.style.borderRadius = '8px';
+        item.style.fontSize = '12.5px';
+        item.innerHTML = `<strong>${s.scheme_name}</strong><br><span style="color:var(--text-muted);">${s.benefits ? s.benefits.slice(0, 100) + '...' : ''}</span>`;
+        schemesList.appendChild(item);
+      });
+      typingBubble.appendChild(schemesList);
+    }
+  } catch(err) {
+    typingBubble.textContent = "I found matching central & state schemes for you. Click 'Check Eligibility' for your personalized report!";
+  }
+  chatContainer.scrollTop = chatContainer.scrollHeight;
+}
+
+function quickAiPrompt(txt) {
+  const input = document.getElementById('aiChatInput');
+  if (input) {
+    input.value = txt;
+    sendAiChat();
+  }
+}
+
 </script>
 </body>
 </html>
